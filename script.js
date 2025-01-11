@@ -197,9 +197,10 @@ function setMaxBet() {
 }
 
 function changeBet(amount) {
-    let currentBet = parseInt(betInput.value, 10);
-    currentBet = Math.max(1, currentBet + amount);
-    betInput.value = currentBet;
+  const betInput = document.getElementById('betInput');
+  let currentBet = parseInt(betInput.value, 10);
+  currentBet += amount;
+  betInput.value = currentBet;
 }
 
 function showErrorPopup(message) {
@@ -257,6 +258,20 @@ function showLogoutButton() {
         logoutButton.classList.add('hidden');
     }
 }
+// Пример функции для вращения слота
+document.getElementById('spinButton').addEventListener('click', function() {
+  // Логика для вращения слота
+  console.log('Spin button clicked');
+});
+
+// Ваш код для других кнопок (например, статистики, выхода и т.д.)
+document.getElementById('statsButton').addEventListener('click', function() {
+  console.log('Stats button clicked');
+});
+
+document.getElementById('logoutButton').addEventListener('click', function() {
+  console.log('Logout button clicked');
+});
 
 // Вызовем функцию при загрузке страницы
 loadUser();
