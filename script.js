@@ -1,20 +1,23 @@
-// Инициализация Supabase
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+// Создаем клиента Supabase
 const supabase = createClient('https://gdhzpqaskoyvbfypfkfv.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8');
-const balanceDisplay = document.getElementById('balance');
+
+// Инициализация переменных
+const balanceDisplay = document.getElementById('balanceDisplay');
 const spinButton = document.getElementById('spinButton');
 const slots = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
 const winPopup = document.getElementById('winPopup');
 const winText = document.getElementById('winText');
 const winAmount = document.getElementById('winAmount');
 const betInput = document.getElementById('betInput');
-const errorPopup = document.getElementById('errorPopup');
-const errorMessage = document.getElementById('errorMessage');
 const statsButton = document.getElementById('statsButton');
 const logoutButton = document.getElementById('logoutButton');
+const errorPopup = document.getElementById('errorPopup');
+const errorMessage = document.getElementById('errorMessage');
 
-let balance = 1000; // Базовый баланс
+let balance = 1000; // Начальный баланс
 let bet = 10;
-const symbols = ['🍒', '🍋', '🍊', '🍇', '⭐', '🍉'];
 let isSpinning = false;
 let currentUser = null;
 
@@ -24,8 +27,9 @@ async function loadUser() {
     currentUser = user.data;
     if (currentUser) {
         loadBalance();
-    } else {
         showLogoutButton();
+    } else {
+        showLoginButton();
     }
 }
 
@@ -44,16 +48,16 @@ async function loadBalance() {
         }
 
         balance = data.balance;
+        balanceDisplay.textContent = balance.toLocaleString();
     }
-    balanceDisplay.textContent = balance.toLocaleString();
 }
 
 // Обновляем баланс в базе данных
-async function updateAccountStats() {
+async function updateBalanceInDatabase() {
     if (currentUser) {
         const { data, error } = await supabase
             .from('users')
-            .update({ balance: balance })
+            .update({ balance })
             .eq('id', currentUser.id);
 
         if (error) {
@@ -66,156 +70,75 @@ async function updateAccountStats() {
 async function startSpin() {
     if (isSpinning) return;
 
-    const bet = parseInt(betInput.value, 10);
-
-    if (isNaN(bet) || bet <= 0) {
+    const betAmount = parseInt(betInput.value, 10);
+    if (isNaN(betAmount) || betAmount <= 0) {
         showErrorPopup('Please enter a valid bet!');
         return;
     }
 
-    if (bet > balance) {
+    if (betAmount > balance) {
         showErrorPopup('Your bet cannot be greater than your balance!');
         return;
     }
 
     isSpinning = true;
-
-    // Немедленно отнимаем ставку от баланса
-    balance -= bet;
+    balance -= betAmount;
     balanceDisplay.textContent = balance.toLocaleString();
 
-    // Обновляем статистику в базе данных при проигрыше
-    await updateAccountStats();
+    await updateBalanceInDatabase();
 
-    spinSlots().then(async (results) => {
-        const combination = results.join('');
-        const multiplier = winTable[combination] || checkTwoMatch(results) || 0;
+    const results = await spinSlots();
 
-        if (multiplier > 0) {
-            const winAmount = bet * multiplier;
-            showWinPopup('🎉 You Win! 🎉', `+${winAmount.toLocaleString()} coins`);
-            balance += winAmount;
+    const combination = results.join('');
+    const multiplier = checkWinCombination(combination);
+    if (multiplier > 0) {
+        const winAmount = betAmount * multiplier;
+        balance += winAmount;
+        await updateBalanceInDatabase();
+        showWinPopup('🎉 You Win! 🎉', `+${winAmount.toLocaleString()} coins`);
+    } else {
+        showWinPopup('Try Again!', 'No win this time');
+    }
 
-            // Обновляем статистику в базе данных при выигрыше
-            await updateAccountStats();
-        } else {
-            showWinPopup('Try Again!', 'No win this time');
-        }
-
-        // Если баланс упал до 0, обновляем его в базе данных
-        if (balance <= 0) {
-            balance = 0;
-            await updateAccountStats(); // Сохраняем обновленный баланс в базе данных
-        }
-
-        balanceDisplay.textContent = balance.toLocaleString(); // Обновляем отображение баланса
-        isSpinning = false;
-    });
+    balanceDisplay.textContent = balance.toLocaleString();
+    isSpinning = false;
 }
 
-// Анимация изменения баланса
-function animateBalanceChange(initial, target) {
-    let currentBalance = initial;
-    const interval = setInterval(() => {
-        if (currentBalance > target) {
-            currentBalance -= 10;
-            balanceDisplay.textContent = currentBalance.toLocaleString();
-        } else if (currentBalance < target) {
-            currentBalance += 10;
-            balanceDisplay.textContent = currentBalance.toLocaleString();
-        } else {
-            clearInterval(interval);
-        }
-    }, 50);
-}
-
+// Анимация вращения слотов
 function spinSlots() {
     return new Promise((resolve) => {
         const results = [];
         slots.forEach((slot, index) => {
-            const timeline = gsap.timeline({
-                onComplete: () => {
-                    const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
-                    slot.textContent = randomSymbol;
-                    results[index] = randomSymbol;
-                    if (results.length === slots.length) {
-                        resolve(results);
-                    }
-                },
-            });
+            const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+            slot.textContent = randomSymbol;
+            results[index] = randomSymbol;
 
-            timeline.to(slot, {
-                y: '50px',
-                duration: 0.1,
-                repeat: 10 + index * 5,
-                onRepeat: () => {
-                    const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
-                    slot.textContent = randomSymbol;
-                },
-            }).to(slot, { y: '0px', duration: 0.2 });
+            if (results.length === slots.length) {
+                resolve(results);
+            }
         });
     });
 }
 
+// Проверка комбинации выигрыша
+function checkWinCombination(combination) {
+    const winTable = {
+        '🍒🍒🍒': 3,
+        '🍋🍋🍋': 2,
+        '🍊🍊🍊': 1,
+    };
+    return winTable[combination] || 0;
+}
+
+// Показать всплывающее окно с выигрышем
 function showWinPopup(title, amount) {
     winText.textContent = title;
     winAmount.textContent = amount;
     winPopup.classList.remove('hidden');
-    gsap.fromTo(
-        winPopup,
-        { opacity: 0, scale: 0.5 },
-        { opacity: 1, scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.75)' }
-    );
-
-    setTimeout(() => {
-        gsap.to(winPopup, {
-            opacity: 0,
-            scale: 0.5,
-            duration: 0.5,
-            onComplete: () => winPopup.classList.add('hidden'),
-        });
-    }, 2000);
+    setTimeout(() => winPopup.classList.add('hidden'), 3000);
 }
 
-spinButton.addEventListener('click', startSpin);
-
-function checkTwoMatch(results) {
-    const twoMatchCombinations = Object.keys(twoMatchWin);
-    for (let combination of twoMatchCombinations) {
-        if (results.join('').includes(combination)) {
-            return twoMatchWin[combination];
-        }
-    }
-    return 0;
-}
-
-function setMaxBet() {
-    betInput.value = balance; // Ставка равна балансу
-}
-
-function changeBet(amount) {
-  const betInput = document.getElementById('betInput');
-  let currentBet = parseInt(betInput.value, 10);
-  currentBet += amount;
-  betInput.value = currentBet;
-}
-
-function showErrorPopup(message) {
-    errorMessage.textContent = message;
-    errorPopup.classList.add('show');
-
-    setTimeout(() => {
-        errorPopup.classList.remove('show');
-    }, 2000);
-}
-
-window.addEventListener('keydown', (event) => {
-    if (event.code === 'Space') {
-        event.preventDefault();
-        startSpin();
-    }
-});
-
+// Обработчик для кнопки "Show Stats"
 async function showStats() {
     if (!currentUser) {
         statsButton.textContent = 'Login/Register';
@@ -238,37 +161,34 @@ async function showStats() {
     }
 }
 
-statsButton.addEventListener('click', showStats);
+function showErrorPopup(message) {
+    errorMessage.textContent = message;
+    errorPopup.classList.add('show');
+    setTimeout(() => errorPopup.classList.remove('show'), 2000);
+}
 
 // Функция для выхода из аккаунта
 async function logout() {
-    await supabase.auth.signOut(); // Выход из Supabase
-    location.reload(); // Перезагружаем страницу
+    await supabase.auth.signOut();
+    location.reload();
 }
 
-// Показываем кнопку Logout, если пользователь залогинен
+// Показываем кнопку "Logout" если пользователь залогинен
 function showLogoutButton() {
-    if (currentUser) {
-        logoutButton.classList.remove('hidden');
-        logoutButton.addEventListener('click', logout);
-    } else {
-        logoutButton.classList.add('hidden');
-    }
+    logoutButton.classList.remove('hidden');
+    logoutButton.addEventListener('click', logout);
 }
-// Пример функции для вращения слота
-document.getElementById('spinButton').addEventListener('click', function() {
-  // Логика для вращения слота
-  console.log('Spin button clicked');
-});
 
-// Ваш код для других кнопок (например, статистики, выхода и т.д.)
-document.getElementById('statsButton').addEventListener('click', function() {
-  console.log('Stats button clicked');
-});
+// Показываем кнопку "Login/Register" если пользователь не залогинен
+function showLoginButton() {
+    statsButton.textContent = 'Login/Register';
+    statsButton.onclick = () => {
+        window.location.href = 'login.html';
+    };
+}
 
-document.getElementById('logoutButton').addEventListener('click', function() {
-  console.log('Logout button clicked');
-});
+spinButton.addEventListener('click', startSpin);
+statsButton.addEventListener('click', showStats);
 
-// Вызовем функцию при загрузке страницы
+// Загружаем пользователя при старте
 loadUser();
