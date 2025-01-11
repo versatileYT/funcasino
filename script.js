@@ -84,7 +84,16 @@ function showStats() {
     return;
   }
 
-  // Здесь можно загрузить и показать статистику пользователя из Supabase
+  supabase
+  .from('users') // Таблица 'users' в вашей базе данных
+  .select('*')
+  .then(response => {
+    console.log(response);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+
 }
 
 function logout() {
