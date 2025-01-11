@@ -1,10 +1,7 @@
 // Инициализация Supabase
-import { createClient } from '@supabase/supabase-js'
-const { createClient } = supabase;
-const supabaseUrl = 'https://gdhzpqaskoyvbfypfkfv.supabase.co'; // URL твоего Supabase проекта
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8'; // Твой Supabase API ключ
+import { createClient } from 'https://cdn.supabase.io/js/supabase.min.js';
+const supabase = createClient('https://gdhzpqaskoyvbfypfkfv.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8');
 const supabase = createClient(supabaseUrl, supabaseKey);
-
 const balanceDisplay = document.getElementById('balance');
 const spinButton = document.getElementById('spinButton');
 const slots = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
@@ -199,10 +196,12 @@ function setMaxBet() {
 }
 
 function changeBet(amount) {
-    let currentBet = parseInt(betInput.value, 10);
-    currentBet = Math.max(1, currentBet + amount);
-    betInput.value = currentBet;
+  const betInput = document.getElementById('betInput');
+  let currentBet = parseInt(betInput.value, 10);
+  currentBet += amount;
+  betInput.value = currentBet;
 }
+
 
 function showErrorPopup(message) {
     errorMessage.textContent = message;
@@ -259,6 +258,22 @@ function showLogoutButton() {
         logoutButton.classList.add('hidden');
     }
 }
+
+// Пример функции для вращения слота
+document.getElementById('spinButton').addEventListener('click', function() {
+  // Логика для вращения слота
+  console.log('Spin button clicked');
+});
+
+// Ваш код для других кнопок (например, статистики, выхода и т.д.)
+document.getElementById('statsButton').addEventListener('click', function() {
+  console.log('Stats button clicked');
+});
+
+document.getElementById('logoutButton').addEventListener('click', function() {
+  console.log('Logout button clicked');
+});
+
 
 // Вызовем функцию при загрузке страницы
 loadUser();
