@@ -85,15 +85,14 @@ function showStats() {
   }
 
   supabase
-  .from('users') // Таблица 'users' в вашей базе данных
-  .select('*')
-  .then(response => {
-    console.log(response);
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
-
+    .from('users') // Таблица 'users' в вашей базе данных
+    .select('*')
+    .then(response => {
+      console.log(response);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
 }
 
 function logout() {
