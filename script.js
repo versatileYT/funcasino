@@ -1,6 +1,7 @@
 // Инициализация Supabase
 import { createClient } from '@supabase/supabase-js'
 
+
 const supabaseUrl = 'https://gdhzpqaskoyvbfypfkfv.supabase.co'
 const supabaseKey = process.env.SUPABASE_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
@@ -85,18 +86,7 @@ function showStats() {
     showError("You must be logged in to view stats!");
     return;
   }
-
-  supabase
-    .from('users') // Таблица 'users' в вашей базе данных
-    .select('*')
-    .then(response => {
-      console.log(response);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
 }
-
 function logout() {
   loggedIn = false;
   document.getElementById('logoutButton').classList.add('hidden');
@@ -113,3 +103,14 @@ function login() {
   document.getElementById('statsButton').classList.remove('hidden');
   document.getElementById('logoutButton').classList.remove('hidden');
 }
+
+async function fetchData() {
+  try {
+    const { data, error } = await supabase.from('users').select('*');
+    if (error) throw error;
+    console.log(data);
+  } catch (err) {
+    console.error("Ошибка:", err);
+  }
+}
+
