@@ -187,19 +187,21 @@ function showLoginButton() {
     };
 }
 
+// Функция для изменения ставки
 function changeBet() {
-    let betInput = document.getElementById('betInput');
-    let betValue = parseInt(betInput.value);
+    const betInput = document.getElementById('betInput');
+    const betValue = parseInt(betInput.value);
     if (isNaN(betValue) || betValue <= 0) {
         alert("Please enter a valid bet amount.");
     } else {
+        bet = betValue;
         console.log(`Bet changed to: ${betValue}`);
     }
 }
 
-
 spinButton.addEventListener('click', startSpin);
 statsButton.addEventListener('click', showStats);
+betInput.addEventListener('change', changeBet);  // Слушатель для изменения ставки
 
 // Загружаем пользователя при старте
 loadUser();
