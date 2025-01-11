@@ -187,6 +187,17 @@ function showLoginButton() {
     };
 }
 
+function changeBet() {
+    let betInput = document.getElementById('betInput');
+    let betValue = parseInt(betInput.value);
+    if (isNaN(betValue) || betValue <= 0) {
+        alert("Please enter a valid bet amount.");
+    } else {
+        console.log(`Bet changed to: ${betValue}`);
+    }
+}
+
+
 spinButton.addEventListener('click', startSpin);
 statsButton.addEventListener('click', showStats);
 
