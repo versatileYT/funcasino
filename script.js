@@ -162,7 +162,7 @@ async function showStats() {
     } else {
         const { data, error } = await supabase
             .from('users')
-            .select('balance, maxWin')
+            .select('balance')
             .eq('id', currentUser.id)
             .single();
 
@@ -171,7 +171,7 @@ async function showStats() {
             return;
         }
 
-        alert(`Balance: ${data.balance} coins\nMax Win: ${data.maxWin} coins`);
+        alert(`Balance: ${data.balance} coins`);
     }
 }
 
@@ -202,20 +202,15 @@ function showLoginButton() {
 }
 
 // Функция для изменения ставки
-function changeBet() {
-    const betInput = document.getElementById('betInput');
-    const betValue = parseInt(betInput.value);
-    if (isNaN(betValue) || betValue <= 0) {
-        alert("Please enter a valid bet amount.");
-    } else {
-        bet = betValue;
-        console.log(`Bet changed to: ${betValue}`);
-    }
+function changeBet(amount) {
+    bet += amount;
+    if (bet < 1) bet = 1; // Не даем ставке быть меньше 1
+    betInput.value = bet;
+    console.log(`Bet changed to: ${bet}`);
 }
 
 spinButton.addEventListener('click', startSpin);
 statsButton.addEventListener('click', showStats);
-betInput.addEventListener('change', changeBet);  // Слушатель для изменения ставки
 
 // Загружаем пользователя при старте
 loadUser();
