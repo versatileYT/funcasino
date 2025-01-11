@@ -1,4 +1,4 @@
-// Инициализация Supabase
+// Инициализация Supabase - перемещаем наверх
 const supabaseUrl = 'https://gdhzpqaskoyvbfypfkfv.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8'; // Замените на ваш ключ
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
