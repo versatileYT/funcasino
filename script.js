@@ -1,216 +1,105 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+// Инициализация Supabase
+const supabaseUrl = 'https://your-project-url.supabase.co';
+const supabaseKey = 'your-anon-key';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-// Создаем клиента Supabase
-const supabase = createClient('https://gdhzpqaskoyvbfypfkfv.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8');
+let balance = 1000;
+let currentBet = 10;
+let loggedIn = false;
 
-// Инициализация переменных
-const balanceDisplay = document.getElementById('balanceDisplay');
-const spinButton = document.getElementById('spinButton');
-const slots = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
-const winPopup = document.getElementById('winPopup');
-const winText = document.getElementById('winText');
-const winAmount = document.getElementById('winAmount');
-const betInput = document.getElementById('betInput');
-const statsButton = document.getElementById('statsButton');
-const logoutButton = document.getElementById('logoutButton');
-const errorPopup = document.getElementById('errorPopup');
-const errorMessage = document.getElementById('errorMessage');
+document.getElementById('spinButton').addEventListener('click', spinSlot);
+document.getElementById('statsButton').addEventListener('click', showStats);
+document.getElementById('logoutButton').addEventListener('click', logout);
 
-let balance = 1000; // Начальный баланс
-let bet = 10;
-let isSpinning = false;
-let currentUser = null;
-
-// Символы для слотов
-const symbols = ['🍒', '🍋', '🍊', '🍉', '🍇', '🍓'];
-
-// Загружаем текущего пользователя из Supabase
-async function loadUser() {
-    const user = await supabase.auth.getUser();
-    currentUser = user.data;
-    if (currentUser) {
-        loadBalance();
-        showLogoutButton();
-    } else {
-        showLoginButton();
-    }
-}
-
-// Загружаем баланс из базы данных
-async function loadBalance() {
-    if (currentUser && currentUser.id) {
-        const { data, error } = await supabase
-            .from('users')
-            .select('balance')
-            .eq('id', currentUser.id)
-            .single();
-
-        if (error) {
-            console.error('Error loading balance:', error.message);
-            return;
-        }
-
-        balance = data.balance;
-        balanceDisplay.textContent = balance.toLocaleString();
-    }
-}
-
-// Обновляем баланс в базе данных
-async function updateBalanceInDatabase() {
-    if (currentUser && currentUser.id) {
-        const { data, error } = await supabase
-            .from('users')
-            .update({ balance })
-            .eq('id', currentUser.id);
-
-        if (error) {
-            console.error('Error updating balance:', error.message);
-        }
-    }
-}
-
-// Обработчик кнопки "Spin"
-async function startSpin() {
-    if (isSpinning) return;
-
-    const betAmount = parseInt(betInput.value, 10);
-    if (isNaN(betAmount) || betAmount <= 0) {
-        showErrorPopup('Please enter a valid bet!');
-        return;
-    }
-
-    if (betAmount > balance) {
-        showErrorPopup('Your bet cannot be greater than your balance!');
-        return;
-    }
-
-    isSpinning = true;
-    balance -= betAmount;
-    balanceDisplay.textContent = balance.toLocaleString();
-
-    await updateBalanceInDatabase();
-
-    const results = await spinSlots();
-
-    const combination = results.join('');
-    const multiplier = checkWinCombination(combination);
-    if (multiplier > 0) {
-        const winAmount = betAmount * multiplier;
-        balance += winAmount;
-        await updateBalanceInDatabase();
-        showWinPopup('🎉 You Win! 🎉', `+${winAmount.toLocaleString()} coins`);
-    } else {
-        showWinPopup('Try Again!', 'No win this time');
-    }
-
-    balanceDisplay.textContent = balance.toLocaleString();
-    isSpinning = false;
-}
-
-// Анимация вращения слотов
-function spinSlots() {
-    return new Promise((resolve) => {
-        const results = [];
-        slots.forEach((slot, index) => {
-            let spinCount = 0;
-            const spinInterval = setInterval(() => {
-                const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
-                slot.textContent = randomSymbol;
-                spinCount++;
-
-                if (spinCount >= 20) {
-                    clearInterval(spinInterval);
-                    results[index] = randomSymbol;
-
-                    if (results.length === slots.length) {
-                        resolve(results);
-                    }
-                }
-            }, 100);
-        });
-    });
-}
-
-// Проверка комбинации выигрыша
-function checkWinCombination(combination) {
-    const winTable = {
-        '🍉🍉🍉': 6,
-        '🍇🍇🍇': 5,
-        '🍓🍓🍓': 4,
-        '🍒🍒🍒': 3,
-        '🍋🍋🍋': 2,
-        '🍊🍊🍊': 1,
-    };
-    return winTable[combination] || 0;
-}
-
-// Показать всплывающее окно с выигрышем
-function showWinPopup(title, amount) {
-    winText.textContent = title;
-    winAmount.textContent = amount;
-    winPopup.classList.remove('hidden');
-    setTimeout(() => winPopup.classList.add('hidden'), 3000);
-}
-
-// Обработчик для кнопки "Show Stats"
-async function showStats() {
-    if (!currentUser) {
-        statsButton.textContent = 'Login/Register';
-        statsButton.onclick = () => {
-            window.location.href = 'login.html';
-        };
-    } else {
-        const { data, error } = await supabase
-            .from('users')
-            .select('balance')
-            .eq('id', currentUser.id)
-            .single();
-
-        if (error) {
-            console.error('Error fetching stats:', error.message);
-            return;
-        }
-
-        alert(`Balance: ${data.balance} coins`);
-    }
-}
-
-function showErrorPopup(message) {
-    errorMessage.textContent = message;
-    errorPopup.classList.add('show');
-    setTimeout(() => errorPopup.classList.remove('show'), 2000);
-}
-
-// Функция для выхода из аккаунта
-async function logout() {
-    await supabase.auth.signOut();
-    location.reload();
-}
-
-// Показываем кнопку "Logout" если пользователь залогинен
-function showLogoutButton() {
-    logoutButton.classList.remove('hidden');
-    logoutButton.addEventListener('click', logout);
-}
-
-// Показываем кнопку "Login/Register" если пользователь не залогинен
-function showLoginButton() {
-    statsButton.textContent = 'Login/Register';
-    statsButton.onclick = () => {
-        window.location.href = 'login.html';
-    };
-}
-
-// Функция для изменения ставки
 function changeBet(amount) {
-    bet += amount;
-    if (bet < 1) bet = 1; // Не даем ставке быть меньше 1
-    betInput.value = bet;
-    console.log(`Bet changed to: ${bet}`);
+  if (balance + amount >= 0) {
+    currentBet += amount;
+    document.getElementById('betInput').value = currentBet;
+  }
 }
 
-spinButton.addEventListener('click', startSpin);
-statsButton.addEventListener('click', showStats);
+function setMaxBet() {
+  currentBet = balance;
+  document.getElementById('betInput').value = currentBet;
+}
 
-// Загружаем пользователя при старте
-loadUser();
+function spinSlot() {
+  if (!loggedIn) {
+    showError("You must be logged in to play!");
+    return;
+  }
+
+  if (currentBet > balance) {
+    showError("Insufficient balance!");
+    return;
+  }
+
+  balance -= currentBet;
+  document.getElementById('balanceDisplay').textContent = balance;
+
+  const fruits = ['🍒', '🍋', '🍊', '🍉', '🍇', '🍓'];
+  const slot1 = fruits[Math.floor(Math.random() * fruits.length)];
+  const slot2 = fruits[Math.floor(Math.random() * fruits.length)];
+  const slot3 = fruits[Math.floor(Math.random() * fruits.length)];
+
+  document.getElementById('slot1').textContent = slot1;
+  document.getElementById('slot2').textContent = slot2;
+  document.getElementById('slot3').textContent = slot3;
+
+  checkResult(slot1, slot2, slot3);
+}
+
+function checkResult(slot1, slot2, slot3) {
+  if (slot1 === slot2 && slot2 === slot3) {
+    showWin(100);
+  } else if (slot1 === slot2 || slot2 === slot3 || slot1 === slot3) {
+    showWin(50);
+  } else {
+    showLose();
+  }
+}
+
+function showWin(amount) {
+  balance += amount;
+  document.getElementById('balanceDisplay').textContent = balance;
+  document.getElementById('winAmount').textContent = `+${amount} coins`;
+  document.getElementById('winPopup').classList.remove('hidden');
+  setTimeout(() => document.getElementById('winPopup').classList.add('hidden'), 3000);
+}
+
+function showLose() {
+  document.getElementById('losePopup').classList.remove('hidden');
+  setTimeout(() => document.getElementById('losePopup').classList.add('hidden'), 3000);
+}
+
+function showError(message) {
+  document.getElementById('errorMessage').textContent = message;
+  document.getElementById('errorPopup').classList.remove('hidden');
+  setTimeout(() => document.getElementById('errorPopup').classList.add('hidden'), 3000);
+}
+
+function showStats() {
+  if (!loggedIn) {
+    showError("You must be logged in to view stats!");
+    return;
+  }
+
+  // Здесь можно загрузить и показать статистику пользователя из Supabase
+}
+
+function logout() {
+  loggedIn = false;
+  document.getElementById('logoutButton').classList.add('hidden');
+  document.getElementById('spinButton').classList.add('hidden');
+  document.getElementById('statsButton').classList.add('hidden');
+  document.getElementById('loginSection').classList.remove('hidden');
+}
+
+function login() {
+  // Здесь добавьте код для входа в систему
+  loggedIn = true;
+  document.getElementById('loginSection').classList.add('hidden');
+  document.getElementById('spinButton').classList.remove('hidden');
+  document.getElementById('statsButton').classList.remove('hidden');
+  document.getElementById('logoutButton').classList.remove('hidden');
+}
