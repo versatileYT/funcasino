@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fun Casino</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/umd/supabase.min.js"></script>
+  <!-- Подключаем библиотеку Supabase с правильным CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/umd/supabase.min.js"></script>
+
+
 </head>
 <body>
   <header>
@@ -68,10 +71,39 @@
     </div>
   </div>
 
+  <div class="bet-section">
+    <label for="betInput">Your Bet:</label>
+    <div class="bet-input-container">
+      <input type="number" id="betInput" value="10" min="1" readonly />
+      <span class="currency">coins</span>
+    </div>
+    <div class="bet-buttons">
+      <button class="bet-btn" onclick="changeBet(10)">+10</button>
+      <button class="bet-btn" onclick="changeBet(20)">+20</button>
+      <button class="bet-btn" onclick="changeBet(50)">+50</button>
+      <button class="bet-btn" onclick="changeBet(100)">+100</button>
+      <button class="bet-btn" onclick="changeBet(500)">+500</button>
+      <button class="bet-btn" onclick="changeBet(1000)">+1000</button>
+      <button class="bet-btn" onclick="changeBet(10000)">+10000</button>
+    </div>
+    <div class="bet-buttons">
+      <button class="bet-btn" onclick="changeBet(-10)">−10</button>
+      <button class="bet-btn" onclick="changeBet(-20)">−20</button>
+      <button class="bet-btn" onclick="changeBet(-50)">−50</button>
+      <button class="bet-btn" onclick="changeBet(-100)">−100</button>
+      <button class="bet-btn" onclick="changeBet(-500)">−500</button>
+      <button class="bet-btn" onclick="changeBet(-1000)">−1000</button>
+      <button class="bet-btn" onclick="changeBet(-10000)">−10000</button>
+    </div>
+  </div>
+
   <footer>
     <p>&copy; 2025 Fun Casino - Play for Fun!</p>
   </footer>
 
+  <!-- Подключаем GSAP для анимаций -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <!-- Подключаем основной скрипт -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
