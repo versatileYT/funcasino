@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fun Casino</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
   <header>
     <div class="balance-container">
@@ -16,7 +14,6 @@
     </div>
   </header>
 
-  <!-- Форма регистрации -->
   <div id="signUpSection" class="hidden">
     <h2>Sign Up</h2>
     <form id="signUpForm">
@@ -29,7 +26,6 @@
     <button id="showLogin">Already have an account? Login</button>
   </div>
 
-  <!-- Форма входа -->
   <div id="loginSection" class="hidden">
     <h2>Login</h2>
     <form id="loginForm">
@@ -55,14 +51,17 @@
     <button id="logoutButton" class="btn hidden">Logout</button>
   </main>
 
-  <!-- Всплывающее окно выигрыша -->
   <div id="winPopup" class="win-popup hidden">
     <h2 id="winText">🎉 YOU WIN! 🎉</h2>
     <p id="winAmount">+200 coins</p>
   </div>
 
-  <!-- Всплывающее окно ошибки -->
-  <div id="errorPopup" class="popup">
+  <div id="losePopup" class="lose-popup hidden">
+    <h2 id="loseText">💸 YOU LOSE! 💸</h2>
+    <p id="loseAmount">-10 coins</p>
+  </div>
+
+  <div id="errorPopup" class="popup hidden">
     <div class="popup-content">
       <span id="errorMessage"></span>
     </div>
@@ -99,15 +98,8 @@
     <p>&copy; 2025 Fun Casino - Play for Fun!</p>
   </footer>
 
-  <!-- Подключение Supabase через CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-  <!-- Подключение GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
-  <!-- Подключение вашего JavaScript кода -->
   <script type="module" src="script.js"></script>
-
 </body>
-
 </html>
