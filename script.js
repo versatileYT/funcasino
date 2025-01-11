@@ -1,8 +1,9 @@
-// Инициализация Supabase - перемещаем наверх
+// Инициализация Supabase
 const supabaseUrl = 'https://gdhzpqaskoyvbfypfkfv.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8'; // Замените на ваш ключ
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+// Инициализация переменных
 let balance = 1000;
 let currentBet = 10;
 let loggedIn = false;
@@ -10,6 +11,7 @@ let loggedIn = false;
 document.getElementById('spinButton').addEventListener('click', spinSlot);
 document.getElementById('statsButton').addEventListener('click', showStats);
 document.getElementById('logoutButton').addEventListener('click', logout);
+document.getElementById('maxBetButton').addEventListener('click', setMaxBet); // Кнопка MAX ставка
 
 // Функции
 function changeBet(amount) {
