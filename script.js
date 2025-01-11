@@ -21,6 +21,9 @@ let bet = 10;
 let isSpinning = false;
 let currentUser = null;
 
+// Символы для слотов
+const symbols = ['🍒', '🍋', '🍊', '🍉', '🍇', '🍓'];
+
 // Загружаем текущего пользователя из Supabase
 async function loadUser() {
     const user = await supabase.auth.getUser();
@@ -35,7 +38,7 @@ async function loadUser() {
 
 // Загружаем баланс из базы данных
 async function loadBalance() {
-    if (currentUser) {
+    if (currentUser && currentUser.id) {
         const { data, error } = await supabase
             .from('users')
             .select('balance')
@@ -54,7 +57,7 @@ async function loadBalance() {
 
 // Обновляем баланс в базе данных
 async function updateBalanceInDatabase() {
-    if (currentUser) {
+    if (currentUser && currentUser.id) {
         const { data, error } = await supabase
             .from('users')
             .update({ balance })
@@ -109,13 +112,21 @@ function spinSlots() {
     return new Promise((resolve) => {
         const results = [];
         slots.forEach((slot, index) => {
-            const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
-            slot.textContent = randomSymbol;
-            results[index] = randomSymbol;
+            let spinCount = 0;
+            const spinInterval = setInterval(() => {
+                const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+                slot.textContent = randomSymbol;
+                spinCount++;
 
-            if (results.length === slots.length) {
-                resolve(results);
-            }
+                if (spinCount >= 20) {
+                    clearInterval(spinInterval);
+                    results[index] = randomSymbol;
+
+                    if (results.length === slots.length) {
+                        resolve(results);
+                    }
+                }
+            }, 100);
         });
     });
 }
@@ -123,6 +134,9 @@ function spinSlots() {
 // Проверка комбинации выигрыша
 function checkWinCombination(combination) {
     const winTable = {
+        '🍉🍉🍉': 6,
+        '🍇🍇🍇': 5,
+        '🍓🍓🍓': 4,
         '🍒🍒🍒': 3,
         '🍋🍋🍋': 2,
         '🍊🍊🍊': 1,
