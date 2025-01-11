@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fun Casino</title>
   <link rel="stylesheet" href="styles.css">
-  <!-- Подключаем библиотеку Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/umd/supabase.js"></script>
+  <!-- Подключаем библиотеку Supabase с правильным CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/umd/supabase.min.js"></script>
 </head>
 <body>
   <header>
@@ -83,7 +83,6 @@
       <button class="bet-btn" onclick="changeBet(500)">+500</button>
       <button class="bet-btn" onclick="changeBet(1000)">+1000</button>
       <button class="bet-btn" onclick="changeBet(10000)">+10000</button>
-      <button class="bet-btn" id="maxBetButton" onclick="setMaxBet()">MAX</button>
     </div>
     <div class="bet-buttons">
       <button class="bet-btn" onclick="changeBet(-10)">−10</button>
