@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fun Casino</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header>
+    <div class="balance-container">
+      <h1>🎰 Fun Casino 🎰</h1>
+      <p>Balance: <span id="balance">1000</span> coins</p>
+    </div>
+  </header>
+  <main>
+    <section class="slot-machine">
+      <div id="slot1" class="slot">🍒</div>
+      <div id="slot2" class="slot">🍋</div>
+      <div id="slot3" class="slot">🍊</div>
+    </section>
+    <button id="spinButton" class="btn">Spin</button>
+    <button id="statsButton" class="btn">Show Stats</button>
+  </main>
+  <!-- Всплывающее окно выигрыша -->
+  <div id="winPopup" class="win-popup hidden">
+    <h2 id="winText">🎉 YOU WIN! 🎉</h2>
+    <p id="winAmount">+200 coins</p>
+  </div>
+
+  <!-- Всплывающее окно ошибки -->
+  <div id="errorPopup" class="popup">
+    <div class="popup-content">
+      <span id="errorMessage"></span>
+    </div>
+  </div>
+
+  <div class="bet-section">
+    <label for="betInput">Your Bet:</label>
+    <div class="bet-input-container">
+      <input type="number" id="betInput" value="10" min="1" readonly />
+      <span class="currency">coins</span>
+    </div>
+    <div class="bet-buttons">
+      <button class="bet-btn" onclick="changeBet(10)">+10</button>
+      <button class="bet-btn" onclick="changeBet(20)">+20</button>
+      <button class="bet-btn" onclick="changeBet(50)">+50</button>
+      <button class="bet-btn" onclick="changeBet(100)">+100</button>
+      <button class="bet-btn" onclick="changeBet(500)">+500</button>
+      <button class="bet-btn" onclick="changeBet(1000)">+1000</button>
+      <button class="bet-btn" onclick="changeBet(10000)">+10000</button>
+      <button class="bet-btn" id="maxBetButton" onclick="setMaxBet()">MAX</button>
+
+    </div>
+    <div class="bet-buttons">
+      <button class="bet-btn" onclick="changeBet(-10)">−10</button>
+      <button class="bet-btn" onclick="changeBet(-20)">−20</button>
+      <button class="bet-btn" onclick="changeBet(-50)">−50</button>
+      <button class="bet-btn" onclick="changeBet(-100)">−100</button>
+      <button class="bet-btn" onclick="changeBet(-500)">−500</button>
+      <button class="bet-btn" onclick="changeBet(-1000)">−1000</button>
+      <button class="bet-btn" onclick="changeBet(-10000)">−10000</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Fun Casino - Play for Fun!</p>
+  </footer>
+
+  <!-- Подключение GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
