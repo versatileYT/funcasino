@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In / Sign Up</title>
+  <link rel="stylesheet" href="stylesl.css">
+</head>
+<body>
+  <div class="form-container">
+    <!-- Раздел для регистрации -->
+    <div id="signUpSection" class="form-section">
+      <h2>Sign Up</h2>
+      <form id="signUpForm">
+        <label for="username">Username</label>
+        <input type="text" id="username" required>
+        
+        <label for="password">Password</label>
+        <input type="password" id="password" required>
+        
+        <button type="submit" id="signUpButton">Sign Up</button>
+      </form>
+      <p>Already have an account? <a href="javascript:void(0);" id="showLogin">Log In</a></p>
+    </div>
+
+    <!-- Раздел для логина -->
+    <div id="loginSection" class="form-section hidden">
+      <h2>Log In</h2>
+      <form id="loginForm">
+        <label for="loginUsername">Username</label>
+        <input type="text" id="loginUsername" required>
+        
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" required>
+        
+        <button type="submit" id="loginButton">Log In</button>
+      </form>
+      <p>Don't have an account? <a href="javascript:void(0);" id="showSignUp">Sign Up</a></p>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>
