@@ -151,43 +151,57 @@
     });
 
     authForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      submitButton.disabled = true;
-      message.textContent = 'Processing...';
+  e.preventDefault();
+  submitButton.disabled = true;
+  message.textContent = 'Processing...';
 
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value;
-      const email = document.getElementById('email')?.value.trim();
-      const confirmPassword = document.getElementById('confirmPassword')?.value;
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  const email = document.getElementById('email')?.value.trim();
+  const confirmPassword = document.getElementById('confirmPassword')?.value;
 
-      if (!isLogin && password !== confirmPassword) {
-        message.textContent = 'Passwords do not match!';
-        submitButton.disabled = false;
+  if (!isLogin && password !== confirmPassword) {
+    message.textContent = 'Passwords do not match!';
+    submitButton.disabled = false;
+    return;
+  }
+
+  try {
+    if (isLogin) {
+      const { user, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      window.location.href = 'index.html';
+    } else {
+      const { user, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      if (error) throw error;
+      
+      // После регистрации добавляем пользователя в таблицу users
+      const { error: insertError } = await supabase
+        .from('users')  // Убедитесь, что у вас есть эта таблица
+        .insert([
+          { id: user.id, username: username, email: email }
+        ]);
+        
+      if (insertError) {
+        message.textContent = `Error: ${insertError.message}`;
         return;
       }
 
-      try {
-        if (isLogin) {
-          const { error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-          if (error) throw error;
-          window.location.href = 'index.html';
-        } else {
-          const { error } = await supabase.auth.signUp({
-            email,
-            password,
-          });
-          if (error) throw error;
-          message.textContent = 'Check your email for a confirmation link!';
-        }
-      } catch (error) {
-        message.textContent = error.message;
-      } finally {
-        submitButton.disabled = false;
-      }
-    });
+      message.textContent = 'Check your email for a confirmation link!';
+    }
+  } catch (error) {
+    message.textContent = error.message;
+  } finally {
+    submitButton.disabled = false;
+  }
+});
+
 
     // Обработка ссылки для подтверждения email
     const url = new URL(window.location.href);
