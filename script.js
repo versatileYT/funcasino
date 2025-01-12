@@ -59,42 +59,35 @@ function showPopup(popupId, message = '', winAmount = 0) {
   popup.classList.remove('hidden');
 }
 
-// Прокрутка слотов
 function spinSlots() {
   const results = [];
   slotElements.forEach((slot, index) => {
     const randomSymbols = Array.from(
-      { length: 10 }, // Количество символов уменьшено для реалистичности
+      { length: 15 }, // Количество случайных символов
       () => symbols[Math.floor(Math.random() * symbols.length)]
     );
     results.push(randomSymbols[randomSymbols.length - 1]);
 
-    const totalDuration = 1.5 + index * 0.3;
-    const blurEffect = 'blur(3px)';
+    const totalDuration = 1.5 + index * 0.3; // Общее время анимации
+    const delayBetweenFrames = totalDuration / randomSymbols.length; // Задержка между сменой символов
 
-    // Прокрутка
-    gsap.fromTo(
-      slot,
-      { y: 0, filter: blurEffect },
-      {
-        y: -30 * randomSymbols.length, // Умеренное смещение
-        duration: totalDuration,
-        ease: 'power2.out',
-        onUpdate: function () {
-          const step = Math.floor(this.progress() * randomSymbols.length);
-          slot.textContent = randomSymbols[step];
-        },
-        onComplete: function () {
-          slot.textContent = results[index];
-          slot.style.transform = 'translateY(0)';
-          gsap.to(slot, { filter: 'blur(0px)', duration: 0.2 });
-        },
+    let currentStep = 0;
+
+    // Интервальная анимация для смены символов
+    const interval = setInterval(() => {
+      slot.textContent = randomSymbols[currentStep];
+      currentStep++;
+
+      if (currentStep >= randomSymbols.length) {
+        clearInterval(interval);
+        slot.textContent = results[index]; // Финальный символ
       }
-    );
+    }, delayBetweenFrames * 1000); // Переводим в миллисекунды
   });
 
   return results;
 }
+
 
 // Проверка комбинации
 function checkCombination(results) {
