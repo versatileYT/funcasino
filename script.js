@@ -58,7 +58,7 @@ async function loadUserData() {
     balance = data.balance || 0;
     MaxWin = data.maxwin || 0;
 
-    balanceDisplay.textContent = Balance: ${balance};
+    balanceDisplay.textContent = `Balance: ${balance}`;
   }
 }
 
