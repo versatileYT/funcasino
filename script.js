@@ -202,3 +202,8 @@ supabase.auth.onAuthStateChange((_event, session) => {
     balanceDisplay.textContent = `Balance: ${balance}`;
   }
 });
+
+// Функция для редиректа на страницу login.html
+function redirectToLogin() {
+  window.location.href = 'login.html';
+}
