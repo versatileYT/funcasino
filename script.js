@@ -85,7 +85,6 @@ function showPopup(popupId, message = '', winAmount = 0) {
   closePopup(popupId, 3000); // Закроется через 3 секунды
 }
 
-
 // Функция для вращения слотов
 function spinSlots() {
   const results = [];
