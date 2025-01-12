@@ -2,11 +2,10 @@
 import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 import CryptoJS from 'https://cdn.skypack.dev/crypto-js';
 
-// Шифрованный ключ и пароль для расшифровки
-const encryptedKey = 'U2FsdGVkX19QzpRlNzi5iFQgFbvl4NfU9URF6LfR5RxV2ZOUboWR2FO9rQy5ZxGm'; // Зашифрованный ключ
-const decryptionPassword = 'strong-secret-password'; // Надежный пароль
 
-// Расшифровка ключа
+const encryptedKey = 'U2FsdGVkX19QzpRlNzi5iFQgFbvl4NfU9URF6LfR5RxV2ZOUboWR2FO9rQy5ZxGm'; 
+const decryptionPassword = 'strong-secret-password'; 
+
 const supabaseKey = CryptoJS.AES.decrypt(encryptedKey, decryptionPassword).toString(CryptoJS.enc.Utf8);
 const supabaseUrl = 'https://gdhzpqaskoyvbfypfkfv.supabase.co';
 const supabase = createClient(supabaseUrl, supabaseKey);
