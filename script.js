@@ -1,3 +1,4 @@
+// Получаем элементы из HTML
 const balanceDisplay = document.getElementById('balanceDisplay');
 const betInput = document.getElementById('betInput');
 const betButtons = document.querySelectorAll('.bet-btn');
@@ -12,7 +13,7 @@ const spinButton = document.getElementById('spinButton');
 
 const symbols = ['🍒', '🍋', '🍊', '⭐', '💎', '🍇', '🍉'];
 const payouts = {
-  '🍒': { triple: 15, double: 5 }, // Индивидуальные коэффициенты
+  '🍒': { triple: 15, double: 5 },
   '🍋': { triple: 10, double: 3 },
   '🍊': { triple: 12, double: 4 },
   '⭐': { triple: 50, double: 15 },
@@ -20,13 +21,15 @@ const payouts = {
   '🍇': { triple: 20, double: 7 },
   '🍉': { triple: 18, double: 6 },
 };
-let balance;
-let MaxWin;
+
+let balance = 1000; // Начальный баланс, будет обновляться из базы данных
+let currentBet = 10; // Изначальная ставка
+let MaxWin = 0; // Изначальный максимальный выигрыш
 
 balanceDisplay.textContent = balance;
 betInput.value = currentBet;
 
-// Обновление значения ставки
+// Функция для обновления ставки
 function updateBet(amount) {
   const newBet = currentBet + amount;
   if (newBet >= 1 && newBet <= balance) {
@@ -35,23 +38,21 @@ function updateBet(amount) {
   }
 }
 
-// Закрыть модальное окно автоматически
+// Функция для скрытия модального окна
 window.closePopup = (popupId, delay = 2000) => {
   const popup = document.getElementById(popupId);
-
-  // Ожидаем некоторое время (delay) перед скрытием окна
   setTimeout(() => {
     gsap.to(popup, {
       opacity: 0,
       duration: 0.5,
       onComplete: () => {
-        popup.classList.add('hidden'); // Скрыть окно после анимации
-      }
+        popup.classList.add('hidden');
+      },
     });
   }, delay);
 };
 
-// Показать модальное окно
+// Функция для отображения модального окна
 function showPopup(popupId, message = '', winAmount = 0) {
   const popup = document.getElementById(popupId);
   const winText = popup.querySelector('h2');
@@ -61,45 +62,41 @@ function showPopup(popupId, message = '', winAmount = 0) {
   if (winAmountDisplay)
     winAmountDisplay.textContent = winAmount > 0 ? `${winAmount} coins` : '';
 
-  // Убираем класс hidden перед анимацией
   popup.classList.remove('hidden');
-  popup.style.opacity = 1;  // Убедимся, что окно видно
-
-  // После 2 секунд скрываем окно
+  popup.style.opacity = 1;
   closePopup(popupId, 2000);
 }
 
+// Функция для вращения слотов
 function spinSlots() {
   const results = [];
   slotElements.forEach((slot, index) => {
     const randomSymbols = Array.from(
-      { length: 15 }, // Количество случайных символов
+      { length: 15 },
       () => symbols[Math.floor(Math.random() * symbols.length)]
     );
     results.push(randomSymbols[randomSymbols.length - 1]);
 
-    const totalDuration = 1.5 + index * 0.3; // Общее время анимации
-    const delayBetweenFrames = totalDuration / randomSymbols.length; // Задержка между сменой символов
+    const totalDuration = 1.5 + index * 0.3;
+    const delayBetweenFrames = totalDuration / randomSymbols.length;
 
     let currentStep = 0;
 
-    // Интервальная анимация для смены символов
     const interval = setInterval(() => {
       slot.textContent = randomSymbols[currentStep];
       currentStep++;
 
       if (currentStep >= randomSymbols.length) {
         clearInterval(interval);
-        slot.textContent = results[index]; // Финальный символ
+        slot.textContent = results[index];
       }
-    }, delayBetweenFrames * 1000); // Переводим в миллисекунды
+    }, delayBetweenFrames * 1000);
   });
 
   return results;
 }
 
-
-// Проверка комбинации
+// Функция для проверки комбинации
 function checkCombination(results) {
   const counts = results.reduce((acc, symbol) => {
     acc[symbol] = (acc[symbol] || 0) + 1;
@@ -147,9 +144,8 @@ spinButton.addEventListener('click', () => {
 
     // Активируем кнопку после завершения
     spinButton.disabled = false;
-  }, 2000); // Задержка равна длительности анимации
+  }, 2000);
 });
-
 
 // Кнопки изменения ставки
 betButtons.forEach((button) => {
@@ -169,4 +165,32 @@ maxBetButton.addEventListener('click', () => {
 resetBetButton.addEventListener('click', () => {
   currentBet = 10;
   betInput.value = currentBet;
+});
+
+// Загрузка данных из Supabase
+async function loadUserStats(userId) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('balance, max_win')
+    .eq('id', userId)
+    .single();
+
+  if (error) {
+    console.error('Error loading user stats:', error.message);
+    return;
+  }
+
+  balance = data.balance;  // Обновляем баланс
+  MaxWin = data.max_win;   // Обновляем максимальный выигрыш
+  balanceDisplay.textContent = balance;  // Отображаем баланс
+}
+
+// Слушаем события изменения статуса пользователя (вход/выход)
+supabase.auth.onAuthStateChange((_event, session) => {
+  if (session?.user) {
+    loadUserStats(session.user.id);
+  } else {
+    balance = 1000;  // Восстановление начального баланса
+    balanceDisplay.textContent = balance;
+  }
 });
