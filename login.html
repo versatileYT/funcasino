@@ -186,29 +186,41 @@
       }
 
       if (user) {
-        // После успешной регистрации добавляем данные в таблицу "users"
-        const { data, insertError } = await supabase
-          .from('users')  // Убедитесь, что таблица называется "users"
-          .insert([
-            { id: user.id, username: username, email: email }  // Замените поля в соответствии с вашей схемой
-          ]);
-
-        if (insertError) {
-          message.textContent = Error adding user data: ${insertError.message};
-          return;
-        }
-
-        message.textContent = 'Check your email for a confirmation link!';
-      } else {
-        message.textContent = 'User not found in the response.';
-      }
-    }
-  } catch (error) {
-    message.textContent = error.message;
-  } finally {
-    submitButton.disabled = false;
-  }
+        const { user, error } = await supabase.auth.signUp({
+  email,
+  password,
 });
+
+if (error) {
+  throw error;
+}
+
+if (user) {
+  // После успешной регистрации добавляем данные в таблицу "users"
+  const { data, insertError } = await supabase
+    .from('users')  // Убедитесь, что таблица называется "users"
+    .insert([
+      { 
+        id: user.id, 
+        username: username, 
+        email: email,
+        balance: 0,  // Начальный баланс
+        maxwin: 0    // Начальный максимальный выигрыш
+      }
+    ]);
+
+  if (insertError) {
+    console.error('Error inserting data into users table:', insertError.message);
+    message.textContent = `Error adding user data: ${insertError.message}`;
+    return;
+  }
+
+  message.textContent = 'Check your email for a confirmation link!';
+} else {
+  console.error('User not found in response.');
+  message.textContent = 'User not found in the response.';
+}
+
 
 
 
