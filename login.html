@@ -159,56 +159,65 @@
       }
     });
 
-    authForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+   authForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirmPassword')?.value;
-      const email = document.getElementById('email')?.value;
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword')?.value;
+  const email = document.getElementById('email')?.value;
 
-      if (!isLogin && password !== confirmPassword) {
-        alert('Passwords do not match!');
-        return;
-      }
+  if (!isLogin && password !== confirmPassword) {
+    alert('Passwords do not match!');
+    return;
+  }
 
-      if (isLogin) {
-        // Входим с помощью username
-        const { data: userData, error: fetchError } = await supabase
-          .from('users') // Предполагаем, что у вас есть таблица users
-          .select('email')
-          .eq('username', username)
-          .single();
+  if (isLogin) {
+    // Входим с помощью username
+    const { data: userData, error: fetchError } = await supabase
+      .from('users') // Предполагаем, что у вас есть таблица users
+      .select('email')
+      .eq('username', username)
+      .single();
 
-        if (fetchError) {
-          alert('User not found: ' + fetchError.message);
-          return;
-        }
+    if (fetchError) {
+      alert('User not found: ' + fetchError.message);
+      return;
+    }
 
-        // Если нашли email, выполняем вход
-        const { error: loginError } = await supabase.auth.signInWithPassword({
-          email: userData.email,
-          password,
-        });
+    // Если нашли email, выполняем вход
+    const { error: loginError } = await supabase.auth.signInWithPassword({
+      email: userData.email,
+      password,
+    });
 
-        if (loginError) {
-          alert('Error logging in: ' + loginError.message);
-        } else {
-          window.location.href = 'index.html';  // Перенаправляем на главную страницу
-        }
-      } else {
-        // Регистрация с использованием email и username
-       const { data, error } = await supabase
-  .from('users')
-  .insert([
-    { username: 'exampleUser', email: 'user@example.com', password: 'securePassword' }
-  ]);
+    if (loginError) {
+      alert('Error logging in: ' + loginError.message);
+    } else {
+      window.location.href = 'index.html';  // Перенаправляем на главную страницу
+    }
+  } else {
+    // Регистрация с использованием email и username
+    if (!username || !email || !password) {
+      alert('Please fill in all fields');
+      return;
+    }
 
-if (error) {
-  console.error('Error inserting user:', error.message);
-} else {
-  console.log('User created:', data);
-}
+    const { data, error } = await supabase
+      .from('users')
+      .upsert([  // Используем upsert для добавления данных, если их нет
+        { username, email, password }  // Преобразуем их в объект
+      ]);
+
+    if (error) {
+      alert('Error signing up: ' + error.message);
+    } else {
+      alert('Check your email for a confirmation link!');
+      window.location.href = 'login.html';  // Перенаправляем на страницу входа
+    }
+  }
+});
+
 
           // Сохраняем username в таблице users (необходимо выполнить запрос INSERT)
           const { error: insertError } = await supabase
