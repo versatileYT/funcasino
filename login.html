@@ -125,107 +125,101 @@
   <footer>
     <p>&copy; 2025 Fun Casino</p>
   </footer>
+<script type="module">
+  import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
-  <script type="module">
-    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+  const supabaseUrl = 'https://gdhzpqaskoyvbfypfkfv.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8'; // Вставьте корректный ключ
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const supabaseUrl = 'https://gdhzpqaskoyvbfypfkfv.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8'; 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+  const authForm = document.getElementById('authForm');
+  const formTitle = document.getElementById('formTitle');
+  const toggleFormLinkText = document.getElementById('toggleFormLinkText');
+  const submitButton = document.getElementById('submitButton');
+  const confirmPasswordContainer = document.getElementById('confirmPasswordContainer');
+  const emailContainer = document.getElementById('emailContainer');
 
-    const authForm = document.getElementById('authForm');
-    const formTitle = document.getElementById('formTitle');
-    const toggleFormLinkText = document.getElementById('toggleFormLinkText');
-    const submitButton = document.getElementById('submitButton');
-    const confirmPasswordContainer = document.getElementById('confirmPasswordContainer');
-    const emailContainer = document.getElementById('emailContainer');
+  let isLogin = true;
 
-    let isLogin = true;
+  // Переключение между формами регистрации и входа
+  toggleFormLinkText.addEventListener('click', () => {
+    isLogin = !isLogin;
 
-    // Переключение между формами регистрации и входа
-    toggleFormLinkText.addEventListener('click', () => {
-      isLogin = !isLogin;
-
-      if (isLogin) {
-        formTitle.textContent = 'Log in';
-        submitButton.textContent = 'Log in';
-        confirmPasswordContainer.style.display = 'none';
-        emailContainer.style.display = 'none'; // Прячем поле для email на странице входа
-      } else {
-        formTitle.textContent = 'Sign up';
-        submitButton.textContent = 'Sign up';
-        confirmPasswordContainer.style.display = 'block';
-        emailContainer.style.display = 'block'; // Показываем поле для email на странице регистрации
-      }
-    });
-
-   authForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
-  const confirmPassword = document.getElementById('confirmPassword')?.value;
-  const email = document.getElementById('email')?.value;
-
-  if (!isLogin && password !== confirmPassword) {
-    alert('Passwords do not match!');
-    return;
-  }
-
-  if (isLogin) {
-    // Входим с помощью username
-    const { data: userData, error: fetchError } = await supabase
-      .from('users') // Предполагаем, что у вас есть таблица users
-      .select('email')
-      .eq('username', username)
-      .single();
-
-    if (fetchError) {
-      alert('User not found: ' + fetchError.message);
-      return;
-    }
-
-    // Если нашли email, выполняем вход
-    const { error: loginError } = await supabase.auth.signInWithPassword({
-      email: userData.email,
-      password,
-    });
-
-    if (loginError) {
-      alert('Error logging in: ' + loginError.message);
+    if (isLogin) {
+      formTitle.textContent = 'Log in';
+      submitButton.textContent = 'Log in';
+      confirmPasswordContainer.style.display = 'none';
+      emailContainer.style.display = 'none'; // Прячем поле для email на странице входа
     } else {
-      window.location.href = 'index.html';  // Перенаправляем на главную страницу
+      formTitle.textContent = 'Sign up';
+      submitButton.textContent = 'Sign up';
+      confirmPasswordContainer.style.display = 'block';
+      emailContainer.style.display = 'block'; // Показываем поле для email на странице регистрации
     }
-  } else {
-    // Регистрация с использованием email и username
-    if (!username || !email || !password) {
-      alert('Please fill in all fields');
+  });
+
+  authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword')?.value;
+    const email = document.getElementById('email')?.value;
+
+    if (!isLogin && password !== confirmPassword) {
+      alert('Passwords do not match!');
       return;
     }
 
-    const { data, error } = await supabase
-  .from('users')
-  .insert([{ username, email, password }]);
+    if (isLogin) {
+      // Входим с помощью username
+      const { data: userData, error: fetchError } = await supabase
+        .from('users') // Предполагаем, что у вас есть таблица users
+        .select('email')
+        .eq('username', username)
+        .single();
 
-if (error) {
-  console.error('Error saving username:', error.message);
-} else {
-  console.log('User successfully created:', data);
-}
+      if (fetchError) {
+        alert('User not found: ' + fetchError.message);
+        return;
+      }
 
+      // Если нашли email, выполняем вход
+      const { error: loginError } = await supabase.auth.signInWithPassword({
+        email: userData.email,
+        password,
+      });
 
+      if (loginError) {
+        alert('Error logging in: ' + loginError.message);
+      } else {
+        window.location.href = 'index.html'; // Перенаправляем на главную страницу
+      }
+    } else {
+      // Регистрация с использованием email и username
+      if (!username || !email || !password) {
+        alert('Please fill in all fields');
+        return;
+      }
 
-          // Сохраняем username в таблице users (необходимо выполнить запрос INSERT)
-          const { error: insertError } = await supabase
-            .from('users')  // Предположим, что у вас есть таблица users
-            .upsert([{ username, email }]); // Добавляем username в таблицу
+      // Сохраняем username в таблице users
+      const { data, error } = await supabase
+        .from('users')
+        .insert([{ username, email, password }]);
 
-          if (insertError) {
-            alert('Error saving username: ' + insertError.message);
-          } else {
-            alert('Check your email for a confirmation link!');
-            window.location.href = 'login.html';  // Перенаправляем на страницу входа
-          };
-  </script>
+      if (error) {
+        alert('Error saving user: ' + error.message);
+        console.error('Error saving user:', error.message);
+      } else {
+        console.log('User successfully created:', data);
+
+        alert('Check your email for a confirmation link!');
+        window.location.href = 'login.html'; // Перенаправляем на страницу входа
+      }
+    }
+  });
+</script>
+
+ 
 </body>
 </html>
