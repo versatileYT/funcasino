@@ -197,6 +197,5 @@ supabase.auth.onAuthStateChange((_event, session) => {
     balanceDisplay.textContent = `Balance: ${balance}`;
   }
 });
-  </script>
 </body>
 </html>
