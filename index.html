@@ -26,7 +26,7 @@
     <!-- Control Buttons -->
     <div class="button-group">
       <button id="spinButton" class="btn">Spin</button>
-      <button id="loginButton" class="btn" onclick="Login()">Log in / Sign up</button>
+      <button id="loginButton" class="btn">Log in / Sign up</button> <!-- Исправлено -->
       <button id="statsButton" class="btn">Show Stats</button>
       <button id="logoutButton" class="btn hidden">Logout</button>
     </div>
@@ -80,7 +80,15 @@
   <footer>
     <p>&copy; 2025 Fun Casino - Play for Fun!</p>
   </footer>
-
+<script>
+   // Получаем кнопку входа/регистрации
+    const loginButton = document.getElementById('loginButton');
+  
+    // Обработчик для кнопки "Log in / Sign up"
+    loginButton.addEventListener('click', () => {
+      window.location.href = 'login.html';  // Перенаправляем на страницу входа/регистрации
+    });
+</script>
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <!-- Подключаем JavaScript файл -->
