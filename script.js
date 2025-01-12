@@ -65,19 +65,26 @@ window.closePopup = (popupId, delay = 2000) => {
   }
 };
 
+// Функция для отображения статистики в модальном окне
 function showPopup(popupId, message = '', winAmount = 0) {
   const popup = document.getElementById(popupId);
-  if (!popup) {
-    console.error(`Popup with ID ${popupId} not found.`);
-    return; // Прерываем выполнение, если popup не найден
-  }
-
   const winText = popup.querySelector('h2');
   const winAmountDisplay = popup.querySelector('p');
+  const balanceDisplayInPopup = document.getElementById('statsBalance');
+  const maxWinDisplayInPopup = document.getElementById('statsMaxWin');
 
   if (message) winText.textContent = message;
   if (winAmountDisplay)
     winAmountDisplay.textContent = winAmount > 0 ? `${winAmount} coins` : '';
+
+  // Обновляем статистику в реальном времени
+  if (balanceDisplayInPopup) {
+    balanceDisplayInPopup.textContent = `Balance: ${balance} coins`;
+  }
+
+  if (maxWinDisplayInPopup) {
+    maxWinDisplayInPopup.textContent = `Max Win: ${MaxWin} coins`;
+  }
 
   // Убираем класс hidden, чтобы показать окно
   popup.classList.remove('hidden');
@@ -85,9 +92,14 @@ function showPopup(popupId, message = '', winAmount = 0) {
   // Обновляем стиль окна на видимый
   popup.style.opacity = 1;
   
-  // После 3 секунд скрываем модальное окно
-  closePopup(popupId, 3000); // Закроется через 3 секунды
+  // Закрытие модального окна после 3 секунд
+  closePopup(popupId, 3000);
 }
+
+// Обработчик для кнопки Show Stats
+statsButton.addEventListener('click', () => {
+  showPopup('statsPopup');
+});
 
 function spinSlots() {
   const results = [];
