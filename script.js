@@ -50,15 +50,19 @@ function updateBet(amount) {
 // Функция для скрытия модального окна
 window.closePopup = (popupId, delay = 2000) => {
   const popup = document.getElementById(popupId);
-  setTimeout(() => {
-    gsap.to(popup, {
-      opacity: 0,
-      duration: 0.5,
-      onComplete: () => {
-        popup.classList.add('hidden');
-      },
-    });
-  }, delay);
+  
+  // Проверим, есть ли элемент
+  if (popup) {
+    setTimeout(() => {
+      gsap.to(popup, {
+        opacity: 0,
+        duration: 0.5,
+        onComplete: () => {
+          popup.classList.add('hidden'); // Скрываем элемент
+        },
+      });
+    }, delay);
+  }
 };
 
 // Функция для отображения модального окна
@@ -71,9 +75,16 @@ function showPopup(popupId, message = '', winAmount = 0) {
   if (winAmountDisplay)
     winAmountDisplay.textContent = winAmount > 0 ? `${winAmount} coins` : '';
 
+  // Убираем класс hidden, чтобы показать окно
   popup.classList.remove('hidden');
+  
+  // Обновляем стиль окна на видимый
   popup.style.opacity = 1;
+  
+  // После 3 секунд скрываем модальное окно
+  closePopup(popupId, 3000); // Закроется через 3 секунды
 }
+
 
 // Функция для вращения слотов
 function spinSlots() {
