@@ -104,12 +104,14 @@ function checkCombination(results) {
   return { type: 'none' };
 }
 
-// Кнопка SPIN
 spinButton.addEventListener('click', () => {
   if (currentBet > balance) {
     showPopup('errorPopup', 'Not enough balance!');
     return;
   }
+
+  // Деактивируем кнопку во время вращения
+  spinButton.disabled = true;
 
   balance -= currentBet;
   balanceDisplay.textContent = balance;
@@ -132,8 +134,12 @@ spinButton.addEventListener('click', () => {
 
     balance += winAmount;
     balanceDisplay.textContent = balance;
-  }, 2000); // Умеренная задержка для завершения анимации
+
+    // Активируем кнопку после завершения
+    spinButton.disabled = false;
+  }, 2000); // Задержка равна длительности анимации
 });
+
 
 // Кнопки изменения ставки
 betButtons.forEach((button) => {
