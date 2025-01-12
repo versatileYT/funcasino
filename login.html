@@ -42,5 +42,59 @@
   <script src="auth.js"></script>
   <script src="https://cdn.supabase.io/js/supabase.min.js"></script>
 
+  <script>
+    // Инициализация Supabase
+    const supabaseUrl = 'YOUR_SUPABASE_URL';
+    const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // Переключение между разделами логина и регистрации
+    document.getElementById('showLogin').addEventListener('click', () => {
+      document.getElementById('signUpSection').classList.add('hidden');
+      document.getElementById('loginSection').classList.remove('hidden');
+    });
+
+    document.getElementById('showSignUp').addEventListener('click', () => {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('signUpSection').classList.remove('hidden');
+    });
+
+    // Регистрация
+    document.getElementById('signUpForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const { user, error } = await supabase.auth.signUp({
+        email: username,
+        password: password
+      });
+
+      if (error) {
+        console.error(error.message);
+      } else {
+        alert('Successfully signed up!');
+      }
+    });
+
+    // Логин
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+
+      const { user, error } = await supabase.auth.signIn({
+        email: username,
+        password: password
+      });
+
+      if (error) {
+        console.error(error.message);
+      } else {
+        alert('Successfully logged in!');
+        window.location.href = 'index.html';  // Перенаправление на главную страницу после логина
+      }
+    });
+  </script>
 </body>
 </html>
