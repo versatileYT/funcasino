@@ -41,7 +41,7 @@ window.closePopup = (popupId) => {
   });
 };
 
-// Показать модальное окно
+/ Показать модальное окно
 function showPopup(popupId, message = '', winAmount = 0) {
   const popup = document.getElementById(popupId);
   const winText = popup.querySelector('h2');
@@ -52,28 +52,34 @@ function showPopup(popupId, message = '', winAmount = 0) {
     winAmountDisplay.textContent = winAmount > 0 ? `${winAmount} coins` : '';
 
   popup.classList.remove('hidden');
-  gsap.fromTo(popup, { opacity: 0 }, { opacity: 1, duration: 0.5 });
 }
 
-// Анимация прокрутки слота
+// Закрыть модальное окно
+window.closePopup = (popupId) => {
+  const popup = document.getElementById(popupId);
+  popup.classList.add('hidden');
+};
+
 function spinSlots() {
   const results = [];
   slotElements.forEach((slot, index) => {
     const randomSymbols = Array.from(
-      { length: 20 },
+      { length: 15 }, // Уменьшено количество символов
       () => symbols[Math.floor(Math.random() * symbols.length)]
     );
     results.push(randomSymbols[randomSymbols.length - 1]);
 
-    // Анимация прокрутки с эффектом размытия
-    const totalDuration = 2 + index * 0.5; // Разное время для каждого слота
+    const totalDuration = 1.5 + index * 0.3; // Сокращено время прокрутки
+    const blurEffect = 'blur(3px)'; // Легкий эффект размытия
+
+    // Прокрутка
     gsap.fromTo(
       slot,
-      { y: 0, filter: 'blur(5px)' },
+      { y: 0, filter: blurEffect },
       {
-        y: -100 * randomSymbols.length,
+        y: -50 * randomSymbols.length, // Уменьшено смещение
         duration: totalDuration,
-        ease: 'power4.out', // Медленное замедление
+        ease: 'power2.out',
         onUpdate: function () {
           const step = Math.floor(this.progress() * randomSymbols.length);
           slot.textContent = randomSymbols[step];
@@ -81,17 +87,17 @@ function spinSlots() {
         onComplete: function () {
           slot.textContent = results[index];
           slot.style.transform = 'translateY(0)';
-          gsap.to(slot, { filter: 'blur(0px)', duration: 0.2 }); // Убрать размытие
+          gsap.to(slot, { filter: 'blur(0px)', duration: 0.2 }); // Убираем размытие
         },
       }
     );
 
-    // Визуальные эффекты подсветки
+    // Эффект увеличения
     gsap.fromTo(
       slot,
       { scale: 1 },
       {
-        scale: 1.2,
+        scale: 1.15,
         duration: totalDuration / 4,
         yoyo: true,
         repeat: 1,
@@ -102,6 +108,7 @@ function spinSlots() {
 
   return results;
 }
+
 
 // Проверка комбинации
 function checkCombination(results) {
