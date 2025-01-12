@@ -18,6 +18,7 @@ const slotElements = [
   document.getElementById('slot3'),
 ];
 const spinButton = document.getElementById('spinButton');
+const statsButton = document.getElementById('statsButton');
 
 const symbols = ['🍒', '🍋', '🍊', '⭐', '💎', '🍇', '🍉'];
 const payouts = {
@@ -72,7 +73,6 @@ function showPopup(popupId, message = '', winAmount = 0) {
 
   popup.classList.remove('hidden');
   popup.style.opacity = 1;
-  closePopup(popupId, 2000);
 }
 
 // Функция для вращения слотов
@@ -155,16 +155,17 @@ spinButton.addEventListener('click', async () => {
   if (currentBet <= balance) {
     const results = spinSlots();
 
+    // Покажем модальное окно только после того, как слот завершит вращение
     const { type, symbol } = checkCombination(results);
 
     if (type === 'none') {
-      showPopup('losePopup');
+      setTimeout(() => showPopup('losePopup'), 1000); // Задержка перед появлением окна
       balance -= currentBet;
     } else {
       const winAmount = payouts[symbol][type];
       balance += winAmount;
       MaxWin = Math.max(MaxWin, winAmount);
-      showPopup('winPopup', `You won ${winAmount} coins!`, winAmount);
+      setTimeout(() => showPopup('winPopup', `You won ${winAmount} coins!`, winAmount), 1000); // Задержка перед появлением окна
     }
 
     balanceDisplay.textContent = `Balance: ${balance}`;
@@ -191,4 +192,16 @@ maxBetButton.addEventListener('click', () => {
 resetBetButton.addEventListener('click', () => {
   currentBet = 10;
   betInput.value = currentBet;
+});
+
+// Кнопка Show Stats
+statsButton.addEventListener('click', () => {
+  showPopup('statsPopup', `Max Win: ${MaxWin} coins\nBalance: ${balance} coins`);
+});
+
+// Реализация прокрутки по нажатию на пробел
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') {
+    spinButton.click();
+  }
 });
