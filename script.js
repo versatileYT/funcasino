@@ -12,8 +12,13 @@ const spinButton = document.getElementById('spinButton');
 
 const symbols = ['🍒', '🍋', '🍊', '⭐', '💎', '🍇', '🍉'];
 const payouts = {
-  triple: 10, // 10x выигрыш за тройную комбинацию
-  double: 2, // 2x выигрыш за двойную комбинацию
+  '🍒': { triple: 15, double: 5 }, // Индивидуальные коэффициенты
+  '🍋': { triple: 10, double: 3 },
+  '🍊': { triple: 12, double: 4 },
+  '⭐': { triple: 50, double: 15 },
+  '💎': { triple: 100, double: 25 },
+  '🍇': { triple: 20, double: 7 },
+  '🍉': { triple: 18, double: 6 },
 };
 
 let balance = 1000; // Начальный баланс
@@ -54,30 +59,25 @@ function showPopup(popupId, message = '', winAmount = 0) {
   popup.classList.remove('hidden');
 }
 
-// Закрыть модальное окно
-window.closePopup = (popupId) => {
-  const popup = document.getElementById(popupId);
-  popup.classList.add('hidden');
-};
-
+// Прокрутка слотов
 function spinSlots() {
   const results = [];
   slotElements.forEach((slot, index) => {
     const randomSymbols = Array.from(
-      { length: 15 }, // Уменьшено количество символов
+      { length: 10 }, // Количество символов уменьшено для реалистичности
       () => symbols[Math.floor(Math.random() * symbols.length)]
     );
     results.push(randomSymbols[randomSymbols.length - 1]);
 
-    const totalDuration = 1.5 + index * 0.3; // Сокращено время прокрутки
-    const blurEffect = 'blur(3px)'; // Легкий эффект размытия
+    const totalDuration = 1.5 + index * 0.3;
+    const blurEffect = 'blur(3px)';
 
     // Прокрутка
     gsap.fromTo(
       slot,
       { y: 0, filter: blurEffect },
       {
-        y: -50 * randomSymbols.length, // Уменьшено смещение
+        y: -30 * randomSymbols.length, // Умеренное смещение
         duration: totalDuration,
         ease: 'power2.out',
         onUpdate: function () {
@@ -87,28 +87,14 @@ function spinSlots() {
         onComplete: function () {
           slot.textContent = results[index];
           slot.style.transform = 'translateY(0)';
-          gsap.to(slot, { filter: 'blur(0px)', duration: 0.2 }); // Убираем размытие
+          gsap.to(slot, { filter: 'blur(0px)', duration: 0.2 });
         },
-      }
-    );
-
-    // Эффект увеличения
-    gsap.fromTo(
-      slot,
-      { scale: 1 },
-      {
-        scale: 1.15,
-        duration: totalDuration / 4,
-        yoyo: true,
-        repeat: 1,
-        ease: 'sine.inOut',
       }
     );
   });
 
   return results;
 }
-
 
 // Проверка комбинации
 function checkCombination(results) {
@@ -142,10 +128,10 @@ spinButton.addEventListener('click', () => {
     let winAmount = 0;
 
     if (combination.type === 'triple') {
-      winAmount = currentBet * payouts.triple;
+      winAmount = currentBet * payouts[combination.symbol].triple;
       showPopup('winPopup', `🎉 Triple ${combination.symbol}! 🎉`, winAmount);
     } else if (combination.type === 'double') {
-      winAmount = currentBet * payouts.double;
+      winAmount = currentBet * payouts[combination.symbol].double;
       showPopup('winPopup', `🎉 Double ${combination.symbol}! 🎉`, winAmount);
     } else {
       showPopup('losePopup', '💸 No match. You lose! 💸');
@@ -153,7 +139,7 @@ spinButton.addEventListener('click', () => {
 
     balance += winAmount;
     balanceDisplay.textContent = balance;
-  }, 3000); // Длительность анимации + пауза
+  }, 2000); // Умеренная задержка для завершения анимации
 });
 
 // Кнопки изменения ставки
