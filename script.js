@@ -204,6 +204,6 @@ supabase.auth.onAuthStateChange((_event, session) => {
 });
 
 // Функция для редиректа на страницу login.html
-function redirectToLogin() {
+function Login() {
   window.location.href = 'login.html';
 }
