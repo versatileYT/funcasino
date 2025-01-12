@@ -1,5 +1,4 @@
-// Импортируем Supabase клиент
-import { createClient } from '@supabase/supabase-js';
+
 
 // Замените на ваш URL и ключ
 const supabaseUrl = 'https://gdhzpqaskoyvbfypfkfv.supabase.co';
