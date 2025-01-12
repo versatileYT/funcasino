@@ -5,30 +5,30 @@ body {
     color: #fff;
     margin: 0;
     padding: 0;
-  }
-  
-  header {
+}
+
+header {
     background: #1f4068;
     padding: 20px;
     margin-bottom: 20px;
-  }
-  
-  .balance-container {
+}
+
+.balance-container {
     display: inline-block;
     border: 3px solid #00ff88;
     padding: 10px 20px;
     border-radius: 20px;
     background: #162447;
     font-size: 1.5rem;
-  }
-  
-  .slot-machine {
+}
+
+.slot-machine {
     display: flex;
     justify-content: center;
-    margin: 30px ;
-  }
-  
-  .slot {
+    margin: 30px;
+}
+
+.slot {
     font-size: 3rem;
     margin: 0 10px;
     padding: 20px;
@@ -36,150 +36,57 @@ body {
     border-radius: 10px;
     background: #fff;
     color: #333;
-  }
-  
-  .btn {
-    font-size: 1.5rem;
-    padding: 15px 30px;
+}
+
+.btn {
+    font-size: 1rem; /* Уменьшенный размер шрифта */
+    padding: 10px 20px; /* Уменьшенные отступы */
     border: none;
     border-radius: 10px;
     background: linear-gradient(to right, #ff512f, #dd2476);
     color: #fff;
     cursor: pointer;
     transition: transform 0.3s, background 0.3s;
-  }
-  
-  .btn:hover {
+}
+
+.btn:hover {
     background: linear-gradient(to right, #dd2476, #ff512f);
     transform: scale(1.1);
-  }
-  
-  .hidden {
-    display: none;
-  }
-  
-  #winMessage {
-    font-size: 2rem;
+}
+
+#winMessage {
+    font-size: 1.5rem;
     margin-top: 20px;
     animation: flash 1.5s infinite;
     color: #ffeb3b;
-  }
-  
-  @keyframes flash {
+}
+
+@keyframes flash {
     0%, 100% {
-      opacity: 1;
+        opacity: 1;
     }
     50% {
-      opacity: 0.5;
+        opacity: 0.5;
     }
-  }
-  
-  footer {
+}
+
+footer {
     margin-top: 30px;
     font-size: 0.8rem;
     color: #aaa;
-  }
-  
-  /* Всплывающее окно выигрыша */
-.win-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-    padding: 30px 50px;
-    border-radius: 20px;
-    text-align: center;
-    color: #fff;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-    opacity: 0;
-    z-index: 10;
-  }
-  
-  .win-popup h2 {
-    font-size: 2.5rem;
-    margin: 0 0 10px;
-  }
-  
-  .win-popup p {
-    font-size: 1.5rem;
-  }
-  
-  .hidden {
-    display: none;
-  }
-/* Новый стиль для кнопок */
-.bet-btn {
-  background-color: #4CAF50;
-  color: white;
-  padding: 8px 12px; /* Уменьшение отступов */
-  margin-left: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px; /* Уменьшение шрифта */
-  transition: background-color 0.3s;
 }
 
-.bet-btn:hover {
-  background-color: #45a049;
-}
-
-  
-  /* Новый стиль для всплывающих окон */
-  .popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.5s, visibility 0.5s;
-  }
-  
-  .popup-content {
-    font-size: 18px;
-    color: #333;
-  }
-  
-  .popup.show {
-    opacity: 1;
-    visibility: visible;
-  }
-  
-  /* Стиль для успешного выигрыша */
-  #winPopup {
-    background-color: #4CAF50;
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-  }
-  
-  /* Стиль для ошибки */
-  #errorPopup {
-    background-color: #f44336;
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-  }
-    
-  .bet-section {
+.bet-section {
     margin-top: 20px;
     text-align: center;
-  }
-  
-  .bet-section label {
-    font-size: 1.2rem;
+}
+
+.bet-section label {
+    font-size: 1rem; /* Уменьшенный размер текста */
     color: #fff;
-    margin-bottom: 10px;
-  }
-  
-  .bet-input-container {
+}
+
+.bet-input-container {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -188,325 +95,52 @@ body {
     border-radius: 10px;
     border: 2px solid #444;
     margin: 10px 0;
-    font-size: 1.5rem;
+    font-size: 1.2rem; /* Уменьшенный шрифт */
     color: #fff;
-  }
-  
-  #betInput {
+}
+
+#betInput {
     background: none;
     border: none;
     color: #fff;
-    font-size: 1.5rem;
+    font-size: 1.2rem; /* Уменьшенный размер шрифта */
     text-align: center;
     width: 80px;
-  }
-  
-  .currency {
-    margin-left: 10px;
-    font-size: 1.2rem;
-    color: #00ff88;
-  }
-  
-  .bet-buttons {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-  }
-  
-  .bet-btn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 15px;
-    margin-left: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-  }
-  
-  .bet-btn:hover {
-    background-color: #45a049;
-  }
+}
 
-  .bet-section {
-    margin-top: 20px;
-    text-align: center;
-  }
-  
-  .bet-section label {
-    font-size: 1.2rem;
-    color: #fff;
-    margin-bottom: 10px;
-  }
-  
-  .bet-input-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #222;
-    padding: 10px;
-    border-radius: 10px;
-    border: 2px solid #444;
-    margin: 10px 0;
-    font-size: 1.5rem;
-    color: #fff;
-  }
-  
-  #betInput {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 2rem; /* Увеличиваем размер шрифта */
-    text-align: center;
-    width: 150px; /* Увеличиваем ширину для лучшей видимости */
-  }
-  
-  .currency {
+.currency {
     margin-left: 10px;
-    font-size: 1.5rem; /* Увеличиваем размер шрифта */
+    font-size: 1rem;
     color: #00ff88;
-  }
-  
-  .bet-buttons {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-    flex-wrap: wrap;
-  }
-  
-  .bet-btn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 12px 18px; /* Немного увеличиваем кнопки */
-    margin: 5px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1.2rem; /* Увеличиваем шрифт */
-    transition: background-color 0.3s;
-  }
-  
-  .bet-btn:hover {
-    background-color: #45a049;
-  }
-  
-  /* Добавим немного отступов между кнопками */
+}
+
 .bet-buttons {
     display: flex;
     justify-content: center;
     margin-top: 10px;
     flex-wrap: wrap;
-  }
-  
-  .bet-btn {
+}
+
+.bet-btn {
     background-color: #4CAF50;
     color: white;
-    padding: 12px 18px;
+    padding: 8px 12px; /* Уменьшенные размеры кнопок */
     margin: 5px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 0.9rem; /* Уменьшенный шрифт */
     transition: background-color 0.3s;
-  }
-  
-  .bet-btn:hover {
+}
+
+.bet-btn:hover {
     background-color: #45a049;
-  }
-  
-  /* Новый стиль для кнопок, уменьшающих ставку */
-  .bet-btn.negative {
-    background-color: #f44336; /* Красный цвет для кнопок уменьшения */
-  }
-  
-  .bet-btn.negative:hover {
+}
+
+.bet-btn.negative {
+    background-color: #f44336;
+}
+
+.bet-btn.negative:hover {
     background-color: #d32f2f;
-  }
-  
-  /* Всплывающее окно ошибки */
-.popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #f44336; /* Красный фон для ошибки */
-  color: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.5s, visibility 0.5s;
-}
-
-.popup-content {
-  font-size: 18px;
-  color: white;
-}
-
-.popup.show {
-  opacity: 1;
-  visibility: visible;
-  transform: translate(-50%, -50%); /* Центрируем окно */
-  background-color: #f44336;
-  color: white;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  font-size: 16px;
-  transition: opacity 0.3s, visibility 0.3s;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 20px;
-    background-color: #f4f4f4;
-  }
-  
-  #app {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  h2 {
-    margin-bottom: 20px;
-  }
-  
-  input {
-    padding: 10px;
-    width: 100%;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-  
-  button {
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    width: 100%;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #45a049;
-  }
-  
-  #mainScreen p {
-    margin: 10px 0;
-  }
-  
-  #mainScreen {
-    margin-top: 20px;
-  }
-
-  #registerForm, #loginForm {
-    margin: 20px;
-  }
-  
-  input[type="text"] {
-    padding: 10px;
-    margin-bottom: 10px;
-    width: 200px;
-  }
-  
-  #statsButton {
-    background-color: #ffa500;
-  }
-  
-  #statsButton:hover {
-    background-color: #e68900;
-  }
-  
-  #welcomeMessage {
-    margin: 20px;
-    text-align: center;
-  }
-  
-  .hidden {
-    display: none;
-  }
-
- /* Стили для скрытия и отображения разделов */
-.hidden {
-  display: none;
-}
-
-
-/* Стиль для модального окна */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  visibility: hidden; /* Скрыть по умолчанию */
-  opacity: 0;
-  transition: visibility 0.3s, opacity 0.3s;
-}
-
-.modal.show {
-  visibility: visible;
-  opacity: 1;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.modal {
-  display: none; /* Скрыто по умолчанию */
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-content {
-  background-color: white;
-  margin: 15% auto;
-  padding: 20px;
-  border-radius: 8px;
-  width: 300px;
-  text-align: center;
-}
-
-.close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-.hidden {
-  display: none;
 }
