@@ -94,19 +94,19 @@
     <section>
       <form id="authForm">
         <label for="username">Username:</label>
-        <input type="text" id="username" placeholder="Enter your username" required minlength="3">
+        <input type="text" id="username" name="username" placeholder="Enter your username" required minlength="3">
 
         <div id="emailContainer">
           <label for="email">Email:</label>
-          <input type="email" id="email" placeholder="Enter your email" required>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required>
         </div>
 
         <label for="password">Password:</label>
-        <input type="password" id="password" placeholder="Enter your password" required minlength="6">
+        <input type="password" id="password" name="password" placeholder="Enter your password" required minlength="6">
 
         <div id="confirmPasswordContainer">
           <label for="confirmPassword">Confirm Password:</label>
-          <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
         </div>
 
         <button type="submit" id="submitButton">Log in</button>
@@ -191,24 +191,24 @@
 
     const url = new URL(window.location.href);
 
-// Проверяем, есть ли токен подтверждения
-const accessToken = url.searchParams.get('access_token');
-const type = url.searchParams.get('type');
+    // Проверяем, есть ли токен подтверждения
+    const accessToken = url.searchParams.get('access_token');
+    const type = url.searchParams.get('type');
 
-if (type === 'recovery' || type === 'signup') {
-  // Восстанавливаем сессию или подтверждаем почту
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    accessToken,
-  });
+    if (type === 'recovery' || type === 'signup') {
+      // Восстанавливаем сессию или подтверждаем почту
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        accessToken,
+      });
 
-  if (error) {
-    console.error('Error confirming email:', error.message);
-    document.body.innerHTML = `<h1>Email confirmation failed: ${error.message}</h1>`;
-  } else {
-    document.body.innerHTML = `<h1>Email confirmed! You can now log in.</h1>`;
-    window.location.href = '/login.html';
-  }
-}
+      if (error) {
+        console.error('Error confirming email:', error.message);
+        document.body.innerHTML = `<h1>Email confirmation failed: ${error.message}</h1>`;
+      } else {
+        document.body.innerHTML = `<h1>Email confirmed! You can now log in.</h1>`;
+        window.location.href = '/login.html';
+      }
+    }
 
   </script>
 </body>
