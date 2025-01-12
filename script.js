@@ -41,7 +41,7 @@ window.closePopup = (popupId) => {
   });
 };
 
-/ Показать модальное окно
+// Показать модальное окно
 function showPopup(popupId, message = '', winAmount = 0) {
   const popup = document.getElementById(popupId);
   const winText = popup.querySelector('h2');
