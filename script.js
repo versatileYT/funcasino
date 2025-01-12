@@ -36,14 +36,21 @@ function updateBet(amount) {
   }
 }
 
-// Закрыть модальное окно
-window.closePopup = (popupId) => {
+// Закрыть модальное окно автоматически
+window.closePopup = (popupId, delay = 2000) => {  // delay - время в миллисекундах, после которого окно исчезает
   const popup = document.getElementById(popupId);
   gsap.to(popup, {
     opacity: 0,
     duration: 0.5,
-    onComplete: () => popup.classList.add('hidden'),
+    onComplete: () => {
+      popup.classList.add('hidden');
+    }
   });
+
+  // Если нужно, чтобы окно исчезло через определенное время
+  setTimeout(() => {
+    popup.classList.add('hidden');
+  }, delay);
 };
 
 // Показать модальное окно
@@ -57,7 +64,11 @@ function showPopup(popupId, message = '', winAmount = 0) {
     winAmountDisplay.textContent = winAmount > 0 ? `${winAmount} coins` : '';
 
   popup.classList.remove('hidden');
+
+  // Закрыть окно через 2 секунды (2000 миллисекунд)
+  closePopup(popupId, 2000); 
 }
+
 
 function spinSlots() {
   const results = [];
