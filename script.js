@@ -5,25 +5,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
   console.log('Supabase Instance:', supabase);
+
   // Инициализация переменных
   let balance = 1000;
   let currentBet = 10;
-  let loggedIn = false;
+  let loggedIn = true;
 
-  // Привязываем обработчики событий к элементам после загрузки DOM
+  // Привязываем обработчики событий
   document.getElementById('spinButton').addEventListener('click', spinSlot);
   document.getElementById('statsButton').addEventListener('click', showStats);
   document.getElementById('logoutButton').addEventListener('click', logout);
-  document.getElementById('maxBetButton')?.addEventListener('click', setMaxBet); // Кнопка MAX ставка
+  document.getElementById('maxBetButton').addEventListener('click', setMaxBet);
 
   // Функции
-  function changeBet(amount) {
-    if (balance + amount >= 0) {
-      currentBet += amount;
-      document.getElementById('betInput').value = currentBet;
-    }
-  }
-
   function setMaxBet() {
     currentBet = balance;
     document.getElementById('betInput').value = currentBet;
@@ -44,15 +38,34 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('balanceDisplay').textContent = balance;
 
     const fruits = ['🍒', '🍋', '🍊', '🍉', '🍇', '🍓'];
-    const slot1 = fruits[Math.floor(Math.random() * fruits.length)];
-    const slot2 = fruits[Math.floor(Math.random() * fruits.length)];
-    const slot3 = fruits[Math.floor(Math.random() * fruits.length)];
+    const slots = [
+      document.getElementById('slot1'),
+      document.getElementById('slot2'),
+      document.getElementById('slot3'),
+    ];
 
-    document.getElementById('slot1').textContent = slot1;
-    document.getElementById('slot2').textContent = slot2;
-    document.getElementById('slot3').textContent = slot3;
+    // Анимация прокрутки
+    let animationInterval = setInterval(() => {
+      slots.forEach((slot) => {
+        const randomFruit = fruits[Math.floor(Math.random() * fruits.length)];
+        slot.textContent = randomFruit;
+      });
+    }, 100);
 
-    checkResult(slot1, slot2, slot3);
+    setTimeout(() => {
+      clearInterval(animationInterval);
+
+      // Окончательные символы
+      const slot1 = fruits[Math.floor(Math.random() * fruits.length)];
+      const slot2 = fruits[Math.floor(Math.random() * fruits.length)];
+      const slot3 = fruits[Math.floor(Math.random() * fruits.length)];
+
+      slots[0].textContent = slot1;
+      slots[1].textContent = slot2;
+      slots[2].textContent = slot3;
+
+      checkResult(slot1, slot2, slot3);
+    }, 2000); // Продолжительность анимации
   }
 
   function checkResult(slot1, slot2, slot3) {
@@ -89,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
       showError("You must be logged in to view stats!");
       return;
     }
+    alert("Stats will be displayed here!");
   }
 
   function logout() {
@@ -97,15 +111,5 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('spinButton').classList.add('hidden');
     document.getElementById('statsButton').classList.add('hidden');
     document.getElementById('loginSection').classList.remove('hidden');
-  }
-
-  async function fetchData() {
-    try {
-      const { data, error } = await supabase.from('users').select('*');
-      if (error) throw error;
-      console.log(data);
-    } catch (err) {
-      console.error("Ошибка:", err);
-    }
   }
 });
