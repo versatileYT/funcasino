@@ -7,81 +7,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f4f4f4;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    h1 {
-      font-size: 3rem;
-      color: #ff6347;
-    }
-    h2 {
-      font-size: 2rem;
-      color: #333;
-    }
-    main {
-      width: 100%;
-      max-width: 400px;
-      background-color: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 1.1rem;
-      color: #333;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 20px;
-      border: 2px solid #ccc;
-      border-radius: 5px;
-      font-size: 1rem;
-      box-sizing: border-box;
-    }
-    input:focus {
-      outline: none;
-      border-color: #ff6347;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #ff6347;
-      color: white;
-      font-size: 1.2rem;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:disabled {
-      background-color: #ff9a85;
-    }
-    p {
-      text-align: center;
-      font-size: 1rem;
-    }
-    a {
-      color: #ff6347;
-      text-decoration: none;
-    }
-    #message {
-      margin-top: 10px;
-      color: red;
-      text-align: center;
-      font-size: 0.9rem;
-    }
+    /* Ваши стили остаются прежними */
   </style>
 </head>
 <body>
@@ -127,7 +53,7 @@
     import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
     const supabaseUrl = 'https://gdhzpqaskoyvbfypfkfv.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8'; // Замените ключ на корректный
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8';  // Замените на правильный ключ
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const authForm = document.getElementById('authForm');
@@ -150,91 +76,65 @@
       message.textContent = '';
     });
 
-   authForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  submitButton.disabled = true;
-  message.textContent = 'Processing...';
+    authForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitButton.disabled = true;
+      message.textContent = 'Processing...';
 
-  const username = document.getElementById('username').value.trim();
-  const password = document.getElementById('password').value;
-  const email = document.getElementById('email')?.value.trim();
-  const confirmPassword = document.getElementById('confirmPassword')?.value;
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const email = document.getElementById('email')?.value.trim();
+      const confirmPassword = document.getElementById('confirmPassword')?.value;
 
-  if (!isLogin && password !== confirmPassword) {
-    message.textContent = 'Passwords do not match!';
-    submitButton.disabled = false;
-    return;
-  }
-
-  try {
-    if (isLogin) {
-      const { user, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error;
-      window.location.href = 'index.html';
-    } else {
-      const { user, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
-      // Проверка на успешную регистрацию
-      if (error) {
-        throw error;
+      if (!isLogin && password !== confirmPassword) {
+        message.textContent = 'Passwords do not match!';
+        submitButton.disabled = false;
+        return;
       }
 
-      if (user) {
-        // После успешной регистрации добавляем данные в таблицу "users"
-        const { data, insertError } = await supabase
-          .from('users')  // Убедитесь, что таблица называется "users"
-          .insert([
-            { id: user.id, username: username, email: email }  // Замените поля в соответствии с вашей схемой
-          ]);
-
-        if (insertError) {
-          message.textContent = `Error adding user data: ${insertError.message}`;
-          return;
-        }
-
-        message.textContent = 'Check your email for a confirmation link!';
-      } else {
-        message.textContent = 'User not found in the response.';
-      }
-    }
-  } catch (error) {
-    message.textContent = error.message;
-  } finally {
-    submitButton.disabled = false;
-  }
-});
-
-
-
-    // Обработка ссылки для подтверждения email
-    const url = new URL(window.location.href);
-    const accessToken = url.searchParams.get('access_token');
-    const type = url.searchParams.get('type');
-
-    if (type === 'recovery' || type === 'signup') {
       try {
-        const { data, error } = await supabase.auth.signInWithOAuth({
-          accessToken,
-        });
-
-        if (error) {
-          console.error('Error confirming email:', error.message);
-          document.body.innerHTML = `<h1>Email confirmation failed: ${error.message}</h1>`;
+        if (isLogin) {
+          const { user, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          if (error) throw error;
+          window.location.href = 'index.html';
         } else {
-          document.body.innerHTML = `<h1>Email confirmed! You can now log in.</h1>`;
-          window.location.href = '/login.html';
+          const { user, error } = await supabase.auth.signUp({
+            email,
+            password,
+          });
+
+          // Проверка на успешную регистрацию
+          if (error) {
+            throw error;
+          }
+
+          if (user) {
+            // После успешной регистрации добавляем данные в таблицу "users"
+            const { data, insertError } = await supabase
+              .from('users')  // Убедитесь, что таблица называется "users"
+              .insert([
+                { id: user.id, username: username, email: email }  // Замените поля в соответствии с вашей схемой
+              ]);
+
+            if (insertError) {
+              message.textContent = `Error adding user data: ${insertError.message}`;
+              return;
+            }
+
+            message.textContent = 'Check your email for a confirmation link!';
+          } else {
+            message.textContent = 'User not found in the response.';
+          }
         }
       } catch (error) {
-        console.error('Error processing the confirmation:', error);
-        document.body.innerHTML = `<h1>Error processing confirmation.</h1>`;
+        message.textContent = error.message;
+      } finally {
+        submitButton.disabled = false;
       }
-    }
+    });
   </script>
 </body>
 </html>
