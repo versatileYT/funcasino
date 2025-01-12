@@ -1,3 +1,6 @@
+// Инициализация Supabase
+const supabase = createClient('https://gdhzpqaskoyvbfypfkfv.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8');
+
 // Получаем элементы из HTML
 const balanceDisplay = document.getElementById('balanceDisplay');
 const betInput = document.getElementById('betInput');
@@ -26,7 +29,7 @@ let balance = 1000; // Начальный баланс, будет обновл�
 let currentBet = 10; // Изначальная ставка
 let MaxWin = 0; // Изначальный максимальный выигрыш
 
-balanceDisplay.textContent = balance;
+balanceDisplay.textContent = `Balance: ${balance}`;
 betInput.value = currentBet;
 
 // Функция для обновления ставки
@@ -121,7 +124,7 @@ spinButton.addEventListener('click', () => {
   spinButton.disabled = true;
 
   balance -= currentBet;
-  balanceDisplay.textContent = balance;
+  balanceDisplay.textContent = `Balance: ${balance}`;
 
   const results = spinSlots();
 
@@ -140,7 +143,7 @@ spinButton.addEventListener('click', () => {
     }
 
     balance += winAmount;
-    balanceDisplay.textContent = balance;
+    balanceDisplay.textContent = `Balance: ${balance}`;
 
     // Активируем кнопку после завершения
     spinButton.disabled = false;
@@ -182,7 +185,7 @@ async function loadUserStats(userId) {
 
   balance = data.balance;  // Обновляем баланс
   MaxWin = data.max_win;   // Обновляем максимальный выигрыш
-  balanceDisplay.textContent = balance;  // Отображаем баланс
+  balanceDisplay.textContent = `Balance: ${balance}`;  // Отображаем баланс
 }
 
 // Слушаем события изменения статуса пользователя (вход/выход)
@@ -191,6 +194,9 @@ supabase.auth.onAuthStateChange((_event, session) => {
     loadUserStats(session.user.id);
   } else {
     balance = 1000;  // Восстановление начального баланса
-    balanceDisplay.textContent = balance;
+    balanceDisplay.textContent = `Balance: ${balance}`;
   }
 });
+  </script>
+</body>
+</html>
