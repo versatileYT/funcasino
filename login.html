@@ -98,6 +98,12 @@
         <label for="username" id="usernameLabel">Username:</label>
         <input type="text" id="username" placeholder="Enter your username" required>
 
+        <!-- Поле для email (будет показано только для регистрации) -->
+        <div id="emailContainer">
+          <label for="email">Email:</label>
+          <input type="email" id="email" placeholder="Enter your email" required>
+        </div>
+
         <label for="password">Password:</label>
         <input type="password" id="password" placeholder="Enter your password" required>
 
@@ -132,7 +138,7 @@
     const toggleFormLinkText = document.getElementById('toggleFormLinkText');
     const submitButton = document.getElementById('submitButton');
     const confirmPasswordContainer = document.getElementById('confirmPasswordContainer');
-    const usernameLabel = document.getElementById('usernameLabel');
+    const emailContainer = document.getElementById('emailContainer');
 
     let isLogin = true;
 
@@ -144,10 +150,12 @@
         formTitle.textContent = 'Log in';
         submitButton.textContent = 'Log in';
         confirmPasswordContainer.style.display = 'none';
+        emailContainer.style.display = 'none'; // Прячем поле для email на странице входа
       } else {
         formTitle.textContent = 'Sign up';
         submitButton.textContent = 'Sign up';
         confirmPasswordContainer.style.display = 'block';
+        emailContainer.style.display = 'block'; // Показываем поле для email на странице регистрации
       }
     });
 
@@ -157,6 +165,7 @@
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirmPassword')?.value;
+      const email = document.getElementById('email')?.value;
 
       if (!isLogin && password !== confirmPassword) {
         alert('Passwords do not match!');
@@ -164,7 +173,7 @@
       }
 
       if (isLogin) {
-        // Входим с помощью username и ищем email в базе данных
+        // Входим с помощью username
         const { data: userData, error: fetchError } = await supabase
           .from('users') // Предполагаем, что у вас есть таблица users
           .select('email')
@@ -188,9 +197,7 @@
           window.location.href = 'index.html';  // Перенаправляем на главную страницу
         }
       } else {
-        // Регистрация с использованием username и email
-        const email = document.getElementById('email').value;
-
+        // Регистрация с использованием email и username
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -199,8 +206,17 @@
         if (error) {
           alert('Error signing up: ' + error.message);
         } else {
-          alert('Check your email for a confirmation link!');
-          window.location.href = 'login.html';  // Перенаправляем на страницу входа
+          // Сохраняем username в таблице users (необходимо выполнить запрос INSERT)
+          const { error: insertError } = await supabase
+            .from('users')  // Предположим, что у вас есть таблица users
+            .upsert([{ username, email }]); // Добавляем username в таблицу
+
+          if (insertError) {
+            alert('Error saving username: ' + insertError.message);
+          } else {
+            alert('Check your email for a confirmation link!');
+            window.location.href = 'login.html';  // Перенаправляем на страницу входа
+          }
         }
       }
     });
