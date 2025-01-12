@@ -140,6 +140,58 @@ footer {
 .bet-btn.negative {
     background-color: #f44336;
 }
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.popup h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.popup p {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.popup button {
+  background: #4caf50;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.popup button:hover {
+  background: #45a049;
+}
+
+.popup.hidden {
+  opacity: 0;
+  transform: translate(-50%, -60%);
+  pointer-events: none;
+}
+
+.popup:not(.hidden) {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
 
 .bet-btn.negative:hover {
     background-color: #d32f2f;
