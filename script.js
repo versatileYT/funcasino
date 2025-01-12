@@ -39,18 +39,16 @@ function updateBet(amount) {
 // Закрыть модальное окно автоматически
 window.closePopup = (popupId, delay = 2000) => {
   const popup = document.getElementById(popupId);
-  
-  gsap.to(popup, {
-    opacity: 0,
-    duration: 0.5,
-    onComplete: () => {
-      popup.classList.add('hidden');
-    }
-  });
 
-  // Закрытие окна через задержку (если необходимо)
+  // Ожидаем некоторое время (delay) перед скрытием окна
   setTimeout(() => {
-    popup.classList.add('hidden');
+    gsap.to(popup, {
+      opacity: 0,
+      duration: 0.5,
+      onComplete: () => {
+        popup.classList.add('hidden'); // Скрыть окно после анимации
+      }
+    });
   }, delay);
 };
 
@@ -66,8 +64,9 @@ function showPopup(popupId, message = '', winAmount = 0) {
 
   // Убираем класс hidden перед анимацией
   popup.classList.remove('hidden');
+  popup.style.opacity = 1;  // Убедимся, что окно видно
 
-  // Теперь окно будет скрываться через 2 секунды (2000 миллисекунд)
+  // После 2 секунд скрываем окно
   closePopup(popupId, 2000);
 }
 
