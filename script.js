@@ -65,9 +65,13 @@ window.closePopup = (popupId, delay = 2000) => {
   }
 };
 
-// Функция для отображения модального окна
 function showPopup(popupId, message = '', winAmount = 0) {
   const popup = document.getElementById(popupId);
+  if (!popup) {
+    console.error(`Popup with ID ${popupId} not found.`);
+    return; // Прерываем выполнение, если popup не найден
+  }
+
   const winText = popup.querySelector('h2');
   const winAmountDisplay = popup.querySelector('p');
 
@@ -85,7 +89,6 @@ function showPopup(popupId, message = '', winAmount = 0) {
   closePopup(popupId, 3000); // Закроется через 3 секунды
 }
 
-// Функция для вращения слотов
 function spinSlots() {
   const results = [];
   slotElements.forEach((slot, index) => {
