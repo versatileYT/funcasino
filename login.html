@@ -204,19 +204,15 @@
     }
 
     const { data, error } = await supabase
-      .from('users')
-      .upsert([  // Используем upsert для добавления данных, если их нет
-        { username, email, password }  // Преобразуем их в объект
-      ]);
+  .from('users')
+  .insert([{ username, email, password }]);
 
-    if (error) {
-      alert('Error signing up: ' + error.message);
-    } else {
-      alert('Check your email for a confirmation link!');
-      window.location.href = 'login.html';  // Перенаправляем на страницу входа
-    }
-  }
-});
+if (error) {
+  console.error('Error saving username:', error.message);
+} else {
+  console.log('User successfully created:', data);
+}
+
 
 
           // Сохраняем username в таблице users (необходимо выполнить запрос INSERT)
