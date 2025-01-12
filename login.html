@@ -237,14 +237,14 @@ if (user) {
 
         if (error) {
           console.error('Error confirming email:', error.message);
-          document.body.innerHTML = <h1>Email confirmation failed: ${error.message}</h1>;
+          document.body.innerHTML = `Email confirmation failed: ${error.message}`;
         } else {
-          document.body.innerHTML = <h1>Email confirmed! You can now log in.</h1>;
+          document.body.innerHTML = `Email confirmed! You can now log in.`;
           window.location.href = '/login.html';
         }
       } catch (error) {
         console.error('Error processing the confirmation:', error);
-        document.body.innerHTML = <h1>Error processing confirmation.</h1>;
+        document.body.innerHTML = `Error processing confirmation.`;
       }
     }
   </script>
