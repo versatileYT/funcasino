@@ -3,7 +3,7 @@ import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
 // Замените на ваш URL и ключ
 const supabaseUrl = 'https://gdhzpqaskoyvbfypfkfv.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8';  // Используйте ваш ключ Supabase
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Получаем элементы из HTML
@@ -119,43 +119,61 @@ function checkCombination(results) {
   return { type: 'none' };
 }
 
-spinButton.addEventListener('click', () => {
-  if (currentBet > balance) {
-    showPopup('errorPopup', 'Not enough balance!');
-    return;
+// Функция для редиректа на страницу login.html
+function redirectToLogin() {
+  window.location.href = 'login.html';
+}
+
+// Слушаем события изменения статуса пользователя (вход/выход)
+supabase.auth.onAuthStateChange((_event, session) => {
+  if (session?.user) {
+    // Если пользователь вошел, скрываем кнопку входа и показываем кнопки "Show Stats" и "Logout"
+    document.getElementById('loginButton').style.display = 'none';
+    document.getElementById('statsButton').style.display = 'block';
+    document.getElementById('logoutButton').style.display = 'block';
+  } else {
+    // Если пользователь не вошел, показываем кнопку входа
+    document.getElementById('loginButton').style.display = 'block';
+    document.getElementById('statsButton').style.display = 'none';
+    document.getElementById('logoutButton').style.display = 'none';
   }
-
-  // Деактивируем кнопку во время вращения
-  spinButton.disabled = true;
-
-  balance -= currentBet;
-  balanceDisplay.textContent = `Balance: ${balance}`;
-
-  const results = spinSlots();
-
-  setTimeout(() => {
-    const combination = checkCombination(results);
-    let winAmount = 0;
-
-    if (combination.type === 'triple') {
-      winAmount = currentBet * payouts[combination.symbol].triple;
-      showPopup('winPopup', `🎉 Triple ${combination.symbol}! 🎉`, winAmount);
-    } else if (combination.type === 'double') {
-      winAmount = currentBet * payouts[combination.symbol].double;
-      showPopup('winPopup', `🎉 Double ${combination.symbol}! 🎉`, winAmount);
-    } else {
-      showPopup('losePopup', '💸 No match. You lose! 💸');
-    }
-
-    balance += winAmount;
-    balanceDisplay.textContent = `Balance: ${balance}`;
-
-    // Активируем кнопку после завершения
-    spinButton.disabled = false;
-  }, 2000);
 });
 
-// Кнопки изменения ставки
+// Обработчик для кнопки входа / регистрации
+document.getElementById('loginButton').addEventListener('click', () => {
+  redirectToLogin();
+});
+
+// Обработчик для кнопки выхода
+document.getElementById('logoutButton').addEventListener('click', async () => {
+  await supabase.auth.signOut();
+  window.location.href = 'login.html'; // Перенаправляем на страницу логина
+});
+
+// Запуск игры
+spinButton.addEventListener('click', async () => {
+  if (currentBet <= balance) {
+    const results = spinSlots();
+
+    const { type, symbol } = checkCombination(results);
+
+    if (type === 'none') {
+      showPopup('losePopup');
+      balance -= currentBet;
+    } else {
+      const winAmount = payouts[symbol][type];
+      balance += winAmount;
+      MaxWin = Math.max(MaxWin, winAmount);
+      showPopup('winPopup', `You won ${winAmount} coins!`, winAmount);
+    }
+
+    balanceDisplay.textContent = `Balance: ${balance}`;
+  } else {
+    showPopup('errorPopup', 'Insufficient balance!');
+  }
+});
+
+// Слушаем события для кнопок ставки
 betButtons.forEach((button) => {
   button.addEventListener('click', () => {
     const value = parseInt(button.dataset.value, 10);
@@ -174,36 +192,3 @@ resetBetButton.addEventListener('click', () => {
   currentBet = 10;
   betInput.value = currentBet;
 });
-
-// Загрузка данных из Supabase
-async function loadUserStats(userId) {
-  const { data, error } = await supabase
-    .from('users')
-    .select('balance, max_win')
-    .eq('id', userId)
-    .single();
-
-  if (error) {
-    console.error('Error loading user stats:', error.message);
-    return;
-  }
-
-  balance = data.balance;  // Обновляем баланс
-  MaxWin = data.max_win;   // Обновляем максимальный выигрыш
-  balanceDisplay.textContent = `Balance: ${balance}`;  // Отображаем баланс
-}
-
-// Слушаем события изменения статуса пользователя (вход/выход)
-supabase.auth.onAuthStateChange((_event, session) => {
-  if (session?.user) {
-    loadUserStats(session.user.id);
-  } else {
-    balance = 1000;  // Восстанавливаем начальный баланс
-    balanceDisplay.textContent = `Balance: ${balance}`;
-  }
-});
-
-// Функция для редиректа на страницу login.html
-function Login() {
-  window.location.href = 'login.html';
-}
