@@ -35,7 +35,7 @@ let balance = 1000; // Начальный баланс
 let currentBet = 10; // Изначальная ставка
 let MaxWin = 0; // Изначальный максимальный выигрыш
 
-balanceDisplay.textContent = Balance: ${balance};
+balanceDisplay.textContent = `Balance: ${balance}`;
 betInput.value = currentBet;
 
 // Функция для загрузки данных пользователя из базы данных
