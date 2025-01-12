@@ -20,7 +20,8 @@ const payouts = {
   '🍇': { triple: 20, double: 7 },
   '🍉': { triple: 18, double: 6 },
 };
-
+let balance;
+let MaxWin;
 
 balanceDisplay.textContent = balance;
 betInput.value = currentBet;
