@@ -189,27 +189,29 @@
       }
     });
 
+    // Обработка ссылки для подтверждения email
     const url = new URL(window.location.href);
-
-    // Проверяем, есть ли токен подтверждения
     const accessToken = url.searchParams.get('access_token');
     const type = url.searchParams.get('type');
 
     if (type === 'recovery' || type === 'signup') {
-      // Восстанавливаем сессию или подтверждаем почту
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        accessToken,
-      });
+      try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          accessToken,
+        });
 
-      if (error) {
-        console.error('Error confirming email:', error.message);
-        document.body.innerHTML = `<h1>Email confirmation failed: ${error.message}</h1>`;
-      } else {
-        document.body.innerHTML = `<h1>Email confirmed! You can now log in.</h1>`;
-        window.location.href = '/login.html';
+        if (error) {
+          console.error('Error confirming email:', error.message);
+          document.body.innerHTML = `<h1>Email confirmation failed: ${error.message}</h1>`;
+        } else {
+          document.body.innerHTML = `<h1>Email confirmed! You can now log in.</h1>`;
+          window.location.href = '/login.html';
+        }
+      } catch (error) {
+        console.error('Error processing the confirmation:', error);
+        document.body.innerHTML = `<h1>Error processing confirmation.</h1>`;
       }
     }
-
   </script>
 </body>
 </html>
