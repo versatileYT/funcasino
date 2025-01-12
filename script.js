@@ -113,14 +113,14 @@ function showPopup(popupId, message = '', winAmount = 0) {
   const maxWinDisplayInPopup = document.getElementById('statsMaxWin');
 
   if (message) winText.textContent = message;
-  if (winAmountDisplay) winAmountDisplay.textContent = winAmount > 0 ? ${winAmount} coins : '';
+  if (winAmountDisplay) winAmountDisplay.textContent = winAmount > 0 ? `${winAmount} coins` : '';
 
   if (balanceDisplayInPopup) {
-    balanceDisplayInPopup.textContent = Balance: ${balance} coins;
+    balanceDisplayInPopup.textContent = `Balance: ${balance} coins`;
   }
 
   if (maxWinDisplayInPopup) {
-    maxWinDisplayInPopup.textContent = Max Win: ${MaxWin} coins;
+    maxWinDisplayInPopup.textContent = `Max Win: ${MaxWin} coins`;
   }
 
   popup.classList.remove('hidden');
