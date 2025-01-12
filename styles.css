@@ -145,7 +145,8 @@ footer {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #ffffff;
+  background: #ffffff; /* Белый фон */
+  color: #333333; /* Темный текст */
   border-radius: 12px;
   padding: 20px 30px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -159,11 +160,13 @@ footer {
 .popup h2 {
   font-size: 1.5rem;
   margin-bottom: 10px;
+  color: #111; /* Черный текст заголовка */
 }
 
 .popup p {
   font-size: 1.2rem;
   margin-bottom: 15px;
+  color: #444; /* Текст с легкой темнотой */
 }
 
 .popup button {
