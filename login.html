@@ -97,10 +97,6 @@
         <label for="username" id="usernameLabel">Username:</label>
         <input type="text" id="username" placeholder="Enter your username" required>
 
-        <!-- Поле для email -->
-        <label for="email" id="emailLabel">Email:</label>
-        <input type="email" id="email" placeholder="Enter your email" required>
-
         <label for="password">Password:</label>
         <input type="password" id="password" placeholder="Enter your password" required>
 
@@ -135,6 +131,7 @@
     const toggleFormLinkText = document.getElementById('toggleFormLinkText');
     const submitButton = document.getElementById('submitButton');
     const confirmPasswordContainer = document.getElementById('confirmPasswordContainer');
+    const usernameLabel = document.getElementById('usernameLabel');
 
     let isLogin = true;
 
@@ -146,6 +143,7 @@
         formTitle.textContent = 'Log in';
         submitButton.textContent = 'Log in';
         confirmPasswordContainer.style.display = 'none';
+        usernameLabel.style.display = 'block';
       } else {
         formTitle.textContent = 'Sign up';
         submitButton.textContent = 'Sign up';
@@ -157,7 +155,6 @@
       e.preventDefault();
 
       const username = document.getElementById('username').value;
-      const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirmPassword')?.value;
 
@@ -167,8 +164,9 @@
       }
 
       if (isLogin) {
+        // Используем Supabase для входа по username
         const { data, error } = await supabase.auth.signInWithPassword({
-          email,
+          email: username, // Временно используем username как email
           password,
         });
 
@@ -178,6 +176,9 @@
           window.location.href = 'index.html';  // Перенаправляем на главную страницу
         }
       } else {
+        // Регистрация с использованием username и email
+        const email = username + '@example.com'; // создаем временный email
+
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
