@@ -214,10 +214,10 @@ spinButton.addEventListener('click', async () => {
       const winAmount = payouts[symbol][type];
       balance += winAmount;
       MaxWin = Math.max(MaxWin, winAmount);
-      setTimeout(() => showPopup('winPopup', You won ${winAmount} coins!, winAmount), 1000);
+      setTimeout(() => showPopup('winPopup', `You won ${winAmount} coins!, winAmount`), 1000);
     }
 
-    balanceDisplay.textContent = Balance: ${balance};
+    balanceDisplay.textContent = `Balance: ${balance}`;
     await updateUserData(); // Обновляем данные после изменения баланса
   } else {
     showPopup('errorPopup', 'Insufficient balance!');
@@ -242,7 +242,7 @@ resetBetButton.addEventListener('click', () => {
 });
 
 statsButton.addEventListener('click', () => {
-  showPopup('statsPopup', Max Win: ${MaxWin} coins\nBalance: ${balance} coins);
+  showPopup('statsPopup', `Max Win: ${MaxWin} coins\nBalance: ${balance} coins`);
 });
 
 document.addEventListener('keydown', (e) => {
