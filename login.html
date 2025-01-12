@@ -97,6 +97,10 @@
         <label for="username" id="usernameLabel">Username:</label>
         <input type="text" id="username" placeholder="Enter your username" required>
 
+        <!-- Поле для email -->
+        <label for="email" id="emailLabel">Email:</label>
+        <input type="email" id="email" placeholder="Enter your email" required>
+
         <label for="password">Password:</label>
         <input type="password" id="password" placeholder="Enter your password" required>
 
@@ -153,6 +157,7 @@
       e.preventDefault();
 
       const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirmPassword')?.value;
 
@@ -160,8 +165,6 @@
         alert('Passwords do not match!');
         return;
       }
-
-      const email = `${username}@example.com`; // Используем username как email для регистрации
 
       if (isLogin) {
         const { data, error } = await supabase.auth.signInWithPassword({
