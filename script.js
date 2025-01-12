@@ -31,12 +31,52 @@ const payouts = {
   '🍉': { triple: 18, double: 6 },
 };
 
-let balance = 1000; // Начальный баланс, будет обновляться из базы данных
+let balance = 1000; // Начальный баланс
 let currentBet = 10; // Изначальная ставка
 let MaxWin = 0; // Изначальный максимальный выигрыш
 
 balanceDisplay.textContent = `Balance: ${balance}`;
 betInput.value = currentBet;
+
+// Функция для загрузки данных пользователя из базы данных
+async function loadUserData() {
+  const user = supabase.auth.user();
+  
+  if (user) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('balance, maxwin')
+      .eq('id', user.id)
+      .single();  // Получаем одну запись для текущего пользователя
+
+    if (error) {
+      console.error('Error fetching user data:', error.message);
+      return;
+    }
+
+    // Обновляем данные баланса и максимального выигрыша
+    balance = data.balance || 0;
+    MaxWin = data.maxwin || 0;
+
+    balanceDisplay.textContent = `Balance: ${balance}`;
+  }
+}
+
+// Функция для обновления данных в базе данных
+async function updateUserData() {
+  const user = supabase.auth.user();
+  
+  if (user) {
+    const { error } = await supabase
+      .from('users')
+      .update({ balance, maxwin: MaxWin })
+      .eq('id', user.id);
+
+    if (error) {
+      console.error('Error updating user data:', error.message);
+    }
+  }
+}
 
 // Функция для обновления ставки
 function updateBet(amount) {
@@ -51,14 +91,13 @@ function updateBet(amount) {
 window.closePopup = (popupId, delay = 2000) => {
   const popup = document.getElementById(popupId);
   
-  // Проверим, есть ли элемент
   if (popup) {
     setTimeout(() => {
       gsap.to(popup, {
         opacity: 0,
         duration: 0.5,
         onComplete: () => {
-          popup.classList.add('hidden'); // Скрываем элемент
+          popup.classList.add('hidden');
         },
       });
     }, delay);
@@ -74,10 +113,8 @@ function showPopup(popupId, message = '', winAmount = 0) {
   const maxWinDisplayInPopup = document.getElementById('statsMaxWin');
 
   if (message) winText.textContent = message;
-  if (winAmountDisplay)
-    winAmountDisplay.textContent = winAmount > 0 ? `${winAmount} coins` : '';
+  if (winAmountDisplay) winAmountDisplay.textContent = winAmount > 0 ? `${winAmount} coins` : '';
 
-  // Обновляем статистику в реальном времени
   if (balanceDisplayInPopup) {
     balanceDisplayInPopup.textContent = `Balance: ${balance} coins`;
   }
@@ -86,13 +123,9 @@ function showPopup(popupId, message = '', winAmount = 0) {
     maxWinDisplayInPopup.textContent = `Max Win: ${MaxWin} coins`;
   }
 
-  // Убираем класс hidden, чтобы показать окно
   popup.classList.remove('hidden');
-  
-  // Обновляем стиль окна на видимый
   popup.style.opacity = 1;
-  
-  // Закрытие модального окна после 3 секунд
+
   closePopup(popupId, 3000);
 }
 
@@ -129,7 +162,6 @@ function spinSlots() {
   return results;
 }
 
-// Функция для проверки комбинации
 function checkCombination(results) {
   const counts = results.reduce((acc, symbol) => {
     acc[symbol] = (acc[symbol] || 0) + 1;
@@ -144,62 +176,54 @@ function checkCombination(results) {
   return { type: 'none' };
 }
 
-// Функция для редиректа на страницу login.html
 function redirectToLogin() {
   window.location.href = 'login.html';
 }
 
-// Слушаем события изменения статуса пользователя (вход/выход)
 supabase.auth.onAuthStateChange((_event, session) => {
   if (session?.user) {
-    // Если пользователь вошел, скрываем кнопку входа и показываем кнопки "Show Stats" и "Logout"
     document.getElementById('loginButton').style.display = 'none';
     document.getElementById('statsButton').style.display = 'block';
     document.getElementById('logoutButton').style.display = 'block';
+    loadUserData(); // Загружаем данные при входе
   } else {
-    // Если пользователь не вошел, показываем кнопку входа
     document.getElementById('loginButton').style.display = 'block';
     document.getElementById('statsButton').style.display = 'none';
     document.getElementById('logoutButton').style.display = 'none';
   }
 });
 
-// Обработчик для кнопки входа / регистрации
 document.getElementById('loginButton').addEventListener('click', () => {
   redirectToLogin();
 });
 
-// Обработчик для кнопки выхода
 document.getElementById('logoutButton').addEventListener('click', async () => {
   await supabase.auth.signOut();
-  window.location.href = 'login.html'; // Перенаправляем на страницу логина
+  window.location.href = 'login.html';
 });
 
-// Запуск игры
 spinButton.addEventListener('click', async () => {
   if (currentBet <= balance) {
     const results = spinSlots();
-
-    // Покажем модальное окно только после того, как слот завершит вращение
     const { type, symbol } = checkCombination(results);
 
     if (type === 'none') {
-      setTimeout(() => showPopup('losePopup'), 1000); // Задержка перед появлением окна
+      setTimeout(() => showPopup('losePopup'), 1000);
       balance -= currentBet;
     } else {
       const winAmount = payouts[symbol][type];
       balance += winAmount;
       MaxWin = Math.max(MaxWin, winAmount);
-      setTimeout(() => showPopup('winPopup', `You won ${winAmount} coins!`, winAmount), 1000); // Задержка перед появлением окна
+      setTimeout(() => showPopup('winPopup', `You won ${winAmount} coins!`, winAmount), 1000);
     }
 
     balanceDisplay.textContent = `Balance: ${balance}`;
+    await updateUserData(); // Обновляем данные после изменения баланса
   } else {
     showPopup('errorPopup', 'Insufficient balance!');
   }
 });
 
-// Слушаем события для кнопок ставки
 betButtons.forEach((button) => {
   button.addEventListener('click', () => {
     const value = parseInt(button.dataset.value, 10);
@@ -207,24 +231,20 @@ betButtons.forEach((button) => {
   });
 });
 
-// Кнопка MAX
 maxBetButton.addEventListener('click', () => {
   currentBet = balance;
   betInput.value = currentBet;
 });
 
-// Кнопка RESET
 resetBetButton.addEventListener('click', () => {
   currentBet = 10;
   betInput.value = currentBet;
 });
 
-// Кнопка Show Stats
 statsButton.addEventListener('click', () => {
   showPopup('statsPopup', `Max Win: ${MaxWin} coins\nBalance: ${balance} coins`);
 });
 
-// Реализация прокрутки по нажатию на пробел
 document.addEventListener('keydown', (e) => {
   if (e.code === 'Space') {
     spinButton.click();
