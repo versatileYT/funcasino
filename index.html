@@ -16,30 +16,6 @@
     </div>
   </header>
 
-  <div id="signUpSection" class="hidden">
-    <h2>Sign Up</h2>
-    <form id="signUpForm">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required>
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required>
-      <button type="submit" class="btn">Create Account</button>
-    </form>
-    <button id="showLogin" class="link-btn">Already have an account? Login</button>
-  </div>
-
-  <div id="loginSection" class="hidden">
-    <h2>Login</h2>
-    <form id="loginForm">
-      <label for="loginUsername">Username:</label>
-      <input type="text" id="loginUsername" name="loginUsername" required>
-      <label for="loginPassword">Password:</label>
-      <input type="password" id="loginPassword" name="loginPassword" required>
-      <button type="submit" class="btn">Login</button>
-    </form>
-    <button id="showSignUp" class="link-btn">Don't have an account? Sign up</button>
-  </div>
-
   <main>
     <section class="slot-machine">
       <div id="slot1" class="slot">🍒</div>
@@ -58,18 +34,21 @@
     <div class="popup-content win">
       <h2>🎉 YOU WIN! 🎉</h2>
       <p id="winAmount">+200 coins</p>
+      <button class="popup-close" onclick="closePopup('winPopup')">Close</button>
     </div>
   </div>
 
   <div id="losePopup" class="popup hidden">
     <div class="popup-content lose">
       <h2>💸 YOU LOSE! 💸</h2>
+      <button class="popup-close" onclick="closePopup('losePopup')">Close</button>
     </div>
   </div>
 
   <div id="errorPopup" class="popup hidden">
     <div class="popup-content error">
       <p id="errorMessage"></p>
+      <button class="popup-close" onclick="closePopup('errorPopup')">Close</button>
     </div>
   </div>
 
@@ -82,20 +61,14 @@
     </div>
 
     <div class="bet-buttons">
-      <button class="bet-btn" onclick="changeBet(10)">+10</button>
-      <button class="bet-btn" onclick="changeBet(20)">+20</button>
-      <button class="bet-btn" onclick="changeBet(50)">+50</button>
-      <button class="bet-btn" onclick="changeBet(100)">+100</button>
-      <button class="bet-btn" onclick="changeBet(500)">+500</button>
-      <button class="bet-btn" onclick="changeBet(1000)">+1000</button>
-    </div>
-
-    <div class="bet-buttons">
-      <button class="bet-btn" onclick="changeBet(-10)">−10</button>
-      <button class="bet-btn" onclick="changeBet(-20)">−20</button>
-      <button class="bet-btn" onclick="changeBet(-50)">−50</button>
-      <button class="bet-btn" onclick="changeBet(-100)">−100</button>
-      <button class="bet-btn" onclick="changeBet(-500)">−500</button>
+      <button class="bet-btn" data-value="10">+10</button>
+      <button class="bet-btn" data-value="20">+20</button>
+      <button class="bet-btn" data-value="50">+50</button>
+      <button class="bet-btn" data-value="100">+100</button>
+      <button class="bet-btn" data-value="500">+500</button>
+      <button class="bet-btn" data-value="-10">−10</button>
+      <button class="bet-btn" data-value="-20">−20</button>
+      <button class="bet-btn" data-value="-50">−50</button>
     </div>
   </section>
 
@@ -103,9 +76,7 @@
     <p>&copy; 2025 Fun Casino - Play for Fun!</p>
   </footer>
 
-  <!-- Подключаем GSAP для анимаций -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <!-- Подключаем основной скрипт -->
   <script src="script.js"></script>
 </body>
 </html>
