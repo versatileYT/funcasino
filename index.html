@@ -23,9 +23,9 @@
       <input type="text" id="username" name="username" required>
       <label for="password">Password:</label>
       <input type="password" id="password" name="password" required>
-      <button type="submit">Create Account</button>
+      <button type="submit" class="btn">Create Account</button>
     </form>
-    <button id="showLogin">Already have an account? Login</button>
+    <button id="showLogin" class="link-btn">Already have an account? Login</button>
   </div>
 
   <div id="loginSection" class="hidden">
@@ -35,9 +35,9 @@
       <input type="text" id="loginUsername" name="loginUsername" required>
       <label for="loginPassword">Password:</label>
       <input type="password" id="loginPassword" name="loginPassword" required>
-      <button type="submit">Login</button>
+      <button type="submit" class="btn">Login</button>
     </form>
-    <button id="showSignUp">Don't have an account? Sign up</button>
+    <button id="showSignUp" class="link-btn">Don't have an account? Sign up</button>
   </div>
 
   <main>
@@ -47,34 +47,40 @@
       <div id="slot3" class="slot">🍊</div>
     </section>
 
-    <button id="spinButton" class="btn">Spin</button>
-
-    <button id="statsButton" class="btn">Show Stats</button>
-    <button id="logoutButton" class="btn hidden">Logout</button>
+    <div class="button-group">
+      <button id="spinButton" class="btn">Spin</button>
+      <button id="statsButton" class="btn">Show Stats</button>
+      <button id="logoutButton" class="btn hidden">Logout</button>
+    </div>
   </main>
 
-  <div id="winPopup" class="win-popup hidden">
-    <h2 id="winText">🎉 YOU WIN! 🎉</h2>
-    <p id="winAmount">+200 coins</p>
+  <div id="winPopup" class="popup hidden">
+    <div class="popup-content win">
+      <h2>🎉 YOU WIN! 🎉</h2>
+      <p id="winAmount">+200 coins</p>
+    </div>
   </div>
 
-  <div id="losePopup" class="lose-popup hidden">
-    <h2 id="loseText">💸 YOU LOSE! 💸</h2>
-    <p id="loseAmount">-10 coins</p>
+  <div id="losePopup" class="popup hidden">
+    <div class="popup-content lose">
+      <h2>💸 YOU LOSE! 💸</h2>
+    </div>
   </div>
 
   <div id="errorPopup" class="popup hidden">
-    <div class="popup-content">
-      <span id="errorMessage"></span>
+    <div class="popup-content error">
+      <p id="errorMessage"></p>
     </div>
   </div>
 
-  <div class="bet-section">
+  <section class="bet-section">
     <label for="betInput">Your Bet:</label>
     <div class="bet-input-container">
       <input type="number" id="betInput" value="10" min="1" readonly />
-      <span class="currency">coins</span>
+      <button id="maxBetButton" class="btn small">MAX</button>
+      <button id="resetBetButton" class="btn small">RESET</button>
     </div>
+
     <div class="bet-buttons">
       <button class="bet-btn" onclick="changeBet(10)">+10</button>
       <button class="bet-btn" onclick="changeBet(20)">+20</button>
@@ -82,18 +88,16 @@
       <button class="bet-btn" onclick="changeBet(100)">+100</button>
       <button class="bet-btn" onclick="changeBet(500)">+500</button>
       <button class="bet-btn" onclick="changeBet(1000)">+1000</button>
-      <button class="bet-btn" onclick="changeBet(10000)">+10000</button>
     </div>
+
     <div class="bet-buttons">
       <button class="bet-btn" onclick="changeBet(-10)">−10</button>
       <button class="bet-btn" onclick="changeBet(-20)">−20</button>
       <button class="bet-btn" onclick="changeBet(-50)">−50</button>
       <button class="bet-btn" onclick="changeBet(-100)">−100</button>
       <button class="bet-btn" onclick="changeBet(-500)">−500</button>
-      <button class="bet-btn" onclick="changeBet(-1000)">−1000</button>
-      <button class="bet-btn" onclick="changeBet(-10000)">−10000</button>
     </div>
-  </div>
+  </section>
 
   <footer>
     <p>&copy; 2025 Fun Casino - Play for Fun!</p>
