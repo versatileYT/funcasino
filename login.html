@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <style>
-    /* Add your styles here */
+    /* Ваши стили */
   </style>
 </head>
 <body>
@@ -110,7 +110,10 @@
             throw error;
           }
 
+          // Добавление данных в таблицу "users" после успешной регистрации
           if (user) {
+            console.log('User registered:', user);
+
             const { data, insertError } = await supabase
               .from('users')  // Убедитесь, что таблица называется "users"
               .insert([
@@ -118,7 +121,7 @@
                   id: user.id, 
                   username: username, 
                   email: email,
-                  balance: 1000,  // Начальный баланс
+                  balance: 0,  // Начальный баланс
                   maxwin: 0    // Начальный максимальный выигрыш
                 }
               ]);
