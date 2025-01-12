@@ -6,6 +6,77 @@
   <title>Login / Register</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    h1 {
+      font-size: 3rem;
+      color: #ff6347;
+    }
+    h2 {
+      font-size: 2rem;
+      color: #333;
+    }
+    main {
+      width: 100%;
+      max-width: 400px;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    input[type="password"] {
+      letter-spacing: 1px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #ff6347;
+      color: white;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ff4500;
+    }
+    p {
+      text-align: center;
+      font-size: 1rem;
+    }
+    a {
+      color: #ff6347;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -19,10 +90,6 @@
         <!-- Поле для имени пользователя -->
         <label for="username" id="usernameLabel">Username:</label>
         <input type="text" id="username" required>
-
-        <!-- Поле для email (будет скрыто для входа) -->
-        <label for="email" id="emailLabel">Email:</label>
-        <input type="email" id="email" required>
 
         <label for="password">Password:</label>
         <input type="password" id="password" required>
@@ -58,8 +125,6 @@
     const toggleFormLinkText = document.getElementById('toggleFormLinkText');
     const submitButton = document.getElementById('submitButton');
     const confirmPasswordContainer = document.getElementById('confirmPasswordContainer');
-    const usernameLabel = document.getElementById('usernameLabel');
-    const emailLabel = document.getElementById('emailLabel');
 
     let isLogin = true;
 
@@ -71,16 +136,10 @@
         formTitle.textContent = 'Log in';
         submitButton.textContent = 'Log in';
         confirmPasswordContainer.style.display = 'none';
-        usernameLabel.style.display = 'none';
-        document.getElementById('username').style.display = 'none';
-        emailLabel.textContent = 'Email:';
       } else {
         formTitle.textContent = 'Sign up';
         submitButton.textContent = 'Sign up';
         confirmPasswordContainer.style.display = 'block';
-        usernameLabel.style.display = 'block';
-        document.getElementById('username').style.display = 'block';
-        emailLabel.textContent = 'Email (used for login):';
       }
     });
 
@@ -88,7 +147,6 @@
       e.preventDefault();
 
       const username = document.getElementById('username').value;
-      const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirmPassword')?.value;
 
@@ -99,7 +157,7 @@
 
       if (isLogin) {
         const { data, error } = await supabase.auth.signInWithPassword({
-          email,
+          username,
           password,
         });
 
@@ -110,7 +168,7 @@
         }
       } else {
         const { data, error } = await supabase.auth.signUp({
-          email,
+          username,
           password,
         });
 
