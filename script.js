@@ -38,7 +38,6 @@ function showPopup(popupId, message = '', winAmount = 0) {
 
   popup.classList.remove('hidden');
   gsap.fromTo(popup, { opacity: 0 }, { opacity: 1, duration: 0.5 });
-}
 
 // Анимация прокрутки слота
 function spinSlots() {
