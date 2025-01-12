@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <style>
+    /* Стиль для улучшения внешнего вида формы */
     body {
       font-family: 'Arial', sans-serif;
       background-color: #f4f4f4;
@@ -143,7 +144,6 @@
         formTitle.textContent = 'Log in';
         submitButton.textContent = 'Log in';
         confirmPasswordContainer.style.display = 'none';
-        usernameLabel.style.display = 'block';
       } else {
         formTitle.textContent = 'Sign up';
         submitButton.textContent = 'Sign up';
@@ -164,20 +164,32 @@
       }
 
       if (isLogin) {
-        // Используем Supabase для входа по username
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: username, // Временно используем username как email
+        // Входим с помощью username и ищем email в базе данных
+        const { data: userData, error: fetchError } = await supabase
+          .from('users') // Предполагаем, что у вас есть таблица users
+          .select('email')
+          .eq('username', username)
+          .single();
+
+        if (fetchError) {
+          alert('User not found: ' + fetchError.message);
+          return;
+        }
+
+        // Если нашли email, выполняем вход
+        const { error: loginError } = await supabase.auth.signInWithPassword({
+          email: userData.email,
           password,
         });
 
-        if (error) {
-          alert('Error logging in: ' + error.message);
+        if (loginError) {
+          alert('Error logging in: ' + loginError.message);
         } else {
           window.location.href = 'index.html';  // Перенаправляем на главную страницу
         }
       } else {
         // Регистрация с использованием username и email
-        const email = username + '@example.com'; // создаем временный email
+        const email = document.getElementById('email').value;
 
         const { data, error } = await supabase.auth.signUp({
           email,
