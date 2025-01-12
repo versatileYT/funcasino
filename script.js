@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const slotElements = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
   const spinButton = document.getElementById('spinButton');
 
-  const symbols = ['🍒', '🍋', '🍊', '⭐', '💎'];
+  const symbols = ['🍒', '🍋', '🍊', '⭐', '💎', '🍇', '🍉'];
   const payouts = {
     triple: 10, // 10x выигрыш за тройную комбинацию
     double: 2,  // 2x выигрыш за двойную комбинацию
@@ -51,20 +51,25 @@ document.addEventListener("DOMContentLoaded", () => {
       const randomSymbols = Array.from({ length: 20 }, () => symbols[Math.floor(Math.random() * symbols.length)]);
       results.push(randomSymbols[randomSymbols.length - 1]);
 
-      // Анимация прокрутки
-      gsap.to(slot, {
-        duration: 2,
-        y: -100 * randomSymbols.length,
-        ease: "power2.out",
-        onUpdate: function () {
-          const step = Math.floor(this.progress() * randomSymbols.length);
-          slot.textContent = randomSymbols[step];
-        },
-        onComplete: function () {
-          slot.textContent = results[index];
-          slot.style.transform = 'translateY(0)';
-        },
-      });
+      // Анимация прокрутки с замедлением
+      const totalDuration = 2 + index * 0.5; // Разный старт для каждого слота
+      gsap.fromTo(
+        slot,
+        { y: 0 },
+        {
+          y: -100 * randomSymbols.length,
+          duration: totalDuration,
+          ease: "power4.out", // Медленное замедление
+          onUpdate: function () {
+            const step = Math.floor(this.progress() * randomSymbols.length);
+            slot.textContent = randomSymbols[step];
+          },
+          onComplete: function () {
+            slot.textContent = results[index];
+            slot.style.transform = 'translateY(0)';
+          },
+        }
+      );
     });
     return results;
   }
@@ -112,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       balance += winAmount;
       balanceDisplay.textContent = balance;
-    }, 2500);
+    }, 3000); // Длительность анимации + пауза
   });
 
   // Кнопки изменения ставки
