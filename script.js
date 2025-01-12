@@ -21,8 +21,6 @@ const payouts = {
   '🍉': { triple: 18, double: 6 },
 };
 
-let balance = 1000; // Начальный баланс
-let currentBet = 10; // Ставка по умолчанию
 
 balanceDisplay.textContent = balance;
 betInput.value = currentBet;
