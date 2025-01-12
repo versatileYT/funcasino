@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <style>
-    /* Стиль для улучшения внешнего вида формы */
     body {
       font-family: 'Arial', sans-serif;
       background-color: #f4f4f4;
@@ -56,9 +55,6 @@
       outline: none;
       border-color: #ff6347;
     }
-    input[type="password"] {
-      letter-spacing: 1px;
-    }
     button {
       width: 100%;
       padding: 12px;
@@ -69,8 +65,8 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    button:hover {
-      background-color: #ff4500;
+    button:disabled {
+      background-color: #ff9a85;
     }
     p {
       text-align: center;
@@ -80,8 +76,11 @@
       color: #ff6347;
       text-decoration: none;
     }
-    a:hover {
-      text-decoration: underline;
+    #message {
+      margin-top: 10px;
+      color: red;
+      text-align: center;
+      font-size: 0.9rem;
     }
   </style>
 </head>
@@ -94,26 +93,24 @@
   <main>
     <section>
       <form id="authForm">
-        <!-- Поле для имени пользователя -->
-        <label for="username" id="usernameLabel">Username:</label>
-        <input type="text" id="username" placeholder="Enter your username" required>
+        <label for="username">Username:</label>
+        <input type="text" id="username" placeholder="Enter your username" required minlength="3">
 
-        <!-- Поле для email (будет показано только для регистрации) -->
         <div id="emailContainer">
           <label for="email">Email:</label>
           <input type="email" id="email" placeholder="Enter your email" required>
         </div>
 
         <label for="password">Password:</label>
-        <input type="password" id="password" placeholder="Enter your password" required>
+        <input type="password" id="password" placeholder="Enter your password" required minlength="6">
 
-        <!-- Поле для подтверждения пароля (будет показано только для регистрации) -->
         <div id="confirmPasswordContainer">
           <label for="confirmPassword">Confirm Password:</label>
           <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
         </div>
 
         <button type="submit" id="submitButton">Log in</button>
+        <div id="message"></div>
       </form>
 
       <p id="toggleFormLink">
@@ -125,101 +122,72 @@
   <footer>
     <p>&copy; 2025 Fun Casino</p>
   </footer>
-<script type="module">
-  import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
-  const supabaseUrl = 'https://gdhzpqaskoyvbfypfkfv.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8'; // Вставьте корректный ключ
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  <script type="module">
+    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
-  const authForm = document.getElementById('authForm');
-  const formTitle = document.getElementById('formTitle');
-  const toggleFormLinkText = document.getElementById('toggleFormLinkText');
-  const submitButton = document.getElementById('submitButton');
-  const confirmPasswordContainer = document.getElementById('confirmPasswordContainer');
-  const emailContainer = document.getElementById('emailContainer');
+    const supabaseUrl = 'https://gdhzpqaskoyvbfypfkfv.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8'; // Замените ключ на корректный
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-  let isLogin = true;
+    const authForm = document.getElementById('authForm');
+    const formTitle = document.getElementById('formTitle');
+    const toggleFormLinkText = document.getElementById('toggleFormLinkText');
+    const submitButton = document.getElementById('submitButton');
+    const confirmPasswordContainer = document.getElementById('confirmPasswordContainer');
+    const emailContainer = document.getElementById('emailContainer');
+    const message = document.getElementById('message');
 
-  // Переключение между формами регистрации и входа
-  toggleFormLinkText.addEventListener('click', () => {
-    isLogin = !isLogin;
+    let isLogin = true;
 
-    if (isLogin) {
-      formTitle.textContent = 'Log in';
-      submitButton.textContent = 'Log in';
-      confirmPasswordContainer.style.display = 'none';
-      emailContainer.style.display = 'none'; // Прячем поле для email на странице входа
-    } else {
-      formTitle.textContent = 'Sign up';
-      submitButton.textContent = 'Sign up';
-      confirmPasswordContainer.style.display = 'block';
-      emailContainer.style.display = 'block'; // Показываем поле для email на странице регистрации
-    }
-  });
+    toggleFormLinkText.addEventListener('click', (e) => {
+      e.preventDefault();
+      isLogin = !isLogin;
+      formTitle.textContent = isLogin ? 'Log in' : 'Sign up';
+      submitButton.textContent = isLogin ? 'Log in' : 'Sign up';
+      confirmPasswordContainer.style.display = isLogin ? 'none' : 'block';
+      emailContainer.style.display = isLogin ? 'none' : 'block';
+      message.textContent = '';
+    });
 
-  authForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    authForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitButton.disabled = true;
+      message.textContent = 'Processing...';
 
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword')?.value;
-    const email = document.getElementById('email')?.value;
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const email = document.getElementById('email')?.value.trim();
+      const confirmPassword = document.getElementById('confirmPassword')?.value;
 
-    if (!isLogin && password !== confirmPassword) {
-      alert('Passwords do not match!');
-      return;
-    }
-
-    if (isLogin) {
-      // Входим с помощью username
-      const { data: userData, error: fetchError } = await supabase
-        .from('users') // Предполагаем, что у вас есть таблица users
-        .select('email')
-        .eq('username', username)
-        .single();
-
-      if (fetchError) {
-        alert('User not found: ' + fetchError.message);
+      if (!isLogin && password !== confirmPassword) {
+        message.textContent = 'Passwords do not match!';
+        submitButton.disabled = false;
         return;
       }
 
-      // Если нашли email, выполняем вход
-      const { error: loginError } = await supabase.auth.signInWithPassword({
-        email: userData.email,
-        password,
-      });
-
-      if (loginError) {
-        alert('Error logging in: ' + loginError.message);
-      } else {
-        window.location.href = 'index.html'; // Перенаправляем на главную страницу
+      try {
+        if (isLogin) {
+          const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          if (error) throw error;
+          window.location.href = 'index.html';
+        } else {
+          const { error } = await supabase.auth.signUp({
+            email,
+            password,
+          });
+          if (error) throw error;
+          message.textContent = 'Check your email for a confirmation link!';
+        }
+      } catch (error) {
+        message.textContent = error.message;
+      } finally {
+        submitButton.disabled = false;
       }
-    } else {
-      // Регистрация с использованием email и username
-      if (!username || !email || !password) {
-        alert('Please fill in all fields');
-        return;
-      }
-
-      // Сохраняем username в таблице users
-      const { data, error } = await supabase
-        .from('users')
-        .insert([{ username, email, password }]);
-
-      if (error) {
-        alert('Error saving user: ' + error.message);
-        console.error('Error saving user:', error.message);
-      } else {
-        console.log('User successfully created:', data);
-
-        alert('Check your email for a confirmation link!');
-        window.location.href = 'login.html'; // Перенаправляем на страницу входа
-      }
-    }
-  });
-</script>
-
- 
+    });
+  </script>
 </body>
 </html>
