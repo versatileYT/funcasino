@@ -3,97 +3,123 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Log In / Sign Up</title>
-  <link rel="stylesheet" href="stylesl.css">
+  <title>Login / Register</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
-  <div class="form-container">
-    <!-- Раздел для регистрации -->
-    <div id="signUpSection" class="form-section">
-      <h2>Sign Up</h2>
-      <form id="signUpForm">
-        <label for="username">Username</label>
+  <header>
+    <h1>Fun Casino</h1>
+    <h2 id="formTitle">Log in</h2>
+  </header>
+
+  <main>
+    <section>
+      <form id="authForm">
+        <!-- Поле для имени пользователя -->
+        <label for="username" id="usernameLabel">Username:</label>
         <input type="text" id="username" required>
-        
-        <label for="password">Password</label>
+
+        <!-- Поле для email (будет скрыто для входа) -->
+        <label for="email" id="emailLabel">Email:</label>
+        <input type="email" id="email" required>
+
+        <label for="password">Password:</label>
         <input type="password" id="password" required>
-        
-        <button type="submit" id="signUpButton">Sign Up</button>
+
+        <!-- Поле для подтверждения пароля (будет показано только для регистрации) -->
+        <div id="confirmPasswordContainer">
+          <label for="confirmPassword">Confirm Password:</label>
+          <input type="password" id="confirmPassword" required>
+        </div>
+
+        <button type="submit" id="submitButton">Log in</button>
       </form>
-      <p>Already have an account? <a href="javascript:void(0);" id="showLogin">Log In</a></p>
-    </div>
 
-    <!-- Раздел для логина -->
-    <div id="loginSection" class="form-section hidden">
-      <h2>Log In</h2>
-      <form id="loginForm">
-        <label for="loginUsername">Username</label>
-        <input type="text" id="loginUsername" required>
-        
-        <label for="loginPassword">Password</label>
-        <input type="password" id="loginPassword" required>
-        
-        <button type="submit" id="loginButton">Log In</button>
-      </form>
-      <p>Don't have an account? <a href="javascript:void(0);" id="showSignUp">Sign Up</a></p>
-    </div>
-  </div>
+      <p id="toggleFormLink">
+        Don't have an account? <a href="#" id="toggleFormLinkText">Sign up</a>
+      </p>
+    </section>
+  </main>
 
-<!--   <script src="auth.js"></script> -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <footer>
+    <p>&copy; 2025 Fun Casino</p>
+  </footer>
 
-  <script>
-  
-import { createClient } from '@supabase/supabase-js'
+  <script type="module">
+    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
-const supabaseUrl = 'https://gdhzpqaskoyvbfypfkfv.supabase.co'
-const supabaseKey = process.env.SUPABASE_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
-    // Переключение между разделами логина и регистрации
-    document.getElementById('showLogin').addEventListener('click', () => {
-      document.getElementById('signUpSection').classList.add('hidden');
-      document.getElementById('loginSection').classList.remove('hidden');
-    });
+    const supabaseUrl = 'https://gdhzpqaskoyvbfypfkfv.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHpwcWFza295dmJmeXBma2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2Mjg3MjIsImV4cCI6MjA1MjIwNDcyMn0.eAe2kQUxRRin9WPjSCB9JyHGhPtUmBt4tyk-IkIRvD8'; 
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-    document.getElementById('showSignUp').addEventListener('click', () => {
-      document.getElementById('loginSection').classList.add('hidden');
-      document.getElementById('signUpSection').classList.remove('hidden');
-    });
+    const authForm = document.getElementById('authForm');
+    const formTitle = document.getElementById('formTitle');
+    const toggleFormLinkText = document.getElementById('toggleFormLinkText');
+    const submitButton = document.getElementById('submitButton');
+    const confirmPasswordContainer = document.getElementById('confirmPasswordContainer');
+    const usernameLabel = document.getElementById('usernameLabel');
+    const emailLabel = document.getElementById('emailLabel');
 
-    // Регистрация
-    document.getElementById('signUpForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
+    let isLogin = true;
 
-      const { user, error } = await supabase.auth.signUp({
-        email: username,
-        password: password
-      });
+    // Переключение между формами регистрации и входа
+    toggleFormLinkText.addEventListener('click', () => {
+      isLogin = !isLogin;
 
-      if (error) {
-        console.error(error.message);
+      if (isLogin) {
+        formTitle.textContent = 'Log in';
+        submitButton.textContent = 'Log in';
+        confirmPasswordContainer.style.display = 'none';
+        usernameLabel.style.display = 'none';
+        document.getElementById('username').style.display = 'none';
+        emailLabel.textContent = 'Email:';
       } else {
-        alert('Successfully signed up!');
+        formTitle.textContent = 'Sign up';
+        submitButton.textContent = 'Sign up';
+        confirmPasswordContainer.style.display = 'block';
+        usernameLabel.style.display = 'block';
+        document.getElementById('username').style.display = 'block';
+        emailLabel.textContent = 'Email (used for login):';
       }
     });
 
-    // Логин
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    authForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const username = document.getElementById('loginUsername').value;
-      const password = document.getElementById('loginPassword').value;
 
-      const { user, error } = await supabase.auth.signIn({
-        email: username,
-        password: password
-      });
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword')?.value;
 
-      if (error) {
-        console.error(error.message);
+      if (!isLogin && password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+      }
+
+      if (isLogin) {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          alert('Error logging in: ' + error.message);
+        } else {
+          window.location.href = 'index.html';  // Перенаправляем на главную страницу
+        }
       } else {
-        alert('Successfully logged in!');
-        window.location.href = 'index.html';  // Перенаправление на главную страницу после логина
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+
+        if (error) {
+          alert('Error signing up: ' + error.message);
+        } else {
+          alert('Check your email for a confirmation link!');
+          window.location.href = 'login.html';  // Перенаправляем на страницу входа
+        }
       }
     });
   </script>
