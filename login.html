@@ -150,7 +150,7 @@
       message.textContent = '';
     });
 
-    authForm.addEventListener('submit', async (e) => {
+   authForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   submitButton.disabled = true;
   message.textContent = 'Processing...';
@@ -179,21 +179,29 @@
         email,
         password,
       });
-      if (error) throw error;
-      
-      // После регистрации добавляем пользователя в таблицу users
-      const { error: insertError } = await supabase
-        .from('users')  // Убедитесь, что у вас есть эта таблица
-        .insert([
-          { id: user.id, username: username, email: email }
-        ]);
-        
-      if (insertError) {
-        message.textContent = `Error: ${insertError.message}`;
-        return;
+
+      // Проверка на успешную регистрацию
+      if (error) {
+        throw error;
       }
 
-      message.textContent = 'Check your email for a confirmation link!';
+      if (user) {
+        // После успешной регистрации добавляем данные в таблицу "users"
+        const { data, insertError } = await supabase
+          .from('users')  // Убедитесь, что таблица называется "users"
+          .insert([
+            { id: user.id, username: username, email: email }  // Замените поля в соответствии с вашей схемой
+          ]);
+
+        if (insertError) {
+          message.textContent = `Error adding user data: ${insertError.message}`;
+          return;
+        }
+
+        message.textContent = 'Check your email for a confirmation link!';
+      } else {
+        message.textContent = 'User not found in the response.';
+      }
     }
   } catch (error) {
     message.textContent = error.message;
@@ -201,6 +209,7 @@
     submitButton.disabled = false;
   }
 });
+
 
 
     // Обработка ссылки для подтверждения email
